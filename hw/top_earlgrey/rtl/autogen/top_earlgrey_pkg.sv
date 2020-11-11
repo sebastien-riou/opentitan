@@ -72,6 +72,16 @@ package top_earlgrey_pkg;
   parameter int unsigned TOP_EARLGREY_AES_SIZE_BYTES = 32'h1000;
 
   /**
+   * Peripheral base address for aes2 in top earlgrey.
+   */
+  parameter int unsigned TOP_EARLGREY_AES2_BASE_ADDR = 32'h400D0000;
+
+  /**
+   * Peripheral size in bytes for aes2 in top earlgrey.
+   */
+  parameter int unsigned TOP_EARLGREY_AES2_SIZE_BYTES = 32'h1000;
+
+  /**
    * Peripheral base address for hmac in top earlgrey.
    */
   parameter int unsigned TOP_EARLGREY_HMAC_BASE_ADDR = 32'h40120000;

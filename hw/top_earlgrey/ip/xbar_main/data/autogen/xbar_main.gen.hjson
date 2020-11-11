@@ -44,6 +44,7 @@
       peri
       flash_ctrl
       aes
+      aes2
       hmac
       rv_plic
       pinmux
@@ -62,6 +63,7 @@
       peri
       flash_ctrl
       aes
+      aes2
       hmac
       rv_plic
       pinmux
@@ -285,6 +287,24 @@
       [
         {
           base_addr: 0x40110000
+          size_byte: 0x1000
+        }
+      ]
+      xbar: false
+      stub: false
+      pipeline: "true"
+    }
+    {
+      name: aes2
+      type: device
+      clock: clk_main_i
+      reset: rst_main_ni
+      pipeline_byp: "false"
+      inst_type: aes
+      addr_range:
+      [
+        {
+          base_addr: 0x400D0000
           size_byte: 0x1000
         }
       ]

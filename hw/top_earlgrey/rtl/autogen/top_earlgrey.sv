@@ -16,6 +16,10 @@ module top_earlgrey #(
   parameter aes_pkg::sbox_impl_e AesSBoxImpl = aes_pkg::SBoxImplCanrightMasked,
   parameter int unsigned SecAesStartTriggerDelay = 0,
   parameter bit SecAesAllowForcingMasks = 1'b0,
+  parameter bit Aes2Masking = 1'b1,
+  parameter aes_pkg::sbox_impl_e Aes2SBoxImpl = aes_pkg::SBoxImplCanrightMasked,
+  parameter int unsigned SecAes2StartTriggerDelay = 0,
+  parameter bit SecAes2AllowForcingMasks = 1'b0,
   parameter int KmacEnMasking = 0,
   parameter int KmacReuseShare = 0,
   parameter otbn_pkg::regfile_e OtbnRegFile = otbn_pkg::RegFileFF,
@@ -117,6 +121,7 @@ module top_earlgrey #(
   // flash_ctrl
   // rv_timer
   // aes
+  // aes2
   // hmac
   // kmac
   // rv_plic
@@ -249,7 +254,7 @@ module top_earlgrey #(
   keymgr_pkg::hw_key_req_t       keymgr_kmac_key;
   keymgr_pkg::kmac_data_req_t       keymgr_kmac_data_req;
   keymgr_pkg::kmac_data_rsp_t       keymgr_kmac_data_rsp;
-  logic [3:0] clkmgr_idle;
+  logic [4:0] clkmgr_idle;
   logic       pwrmgr_wakeups;
   logic       pwrmgr_rstreqs;
   tlul_pkg::tl_h2d_t       rom_tl_req;
@@ -268,6 +273,8 @@ module top_earlgrey #(
   tlul_pkg::tl_d2h_t       kmac_tl_rsp;
   tlul_pkg::tl_h2d_t       aes_tl_req;
   tlul_pkg::tl_d2h_t       aes_tl_rsp;
+  tlul_pkg::tl_h2d_t       aes2_tl_req;
+  tlul_pkg::tl_d2h_t       aes2_tl_rsp;
   tlul_pkg::tl_h2d_t       rv_plic_tl_req;
   tlul_pkg::tl_d2h_t       rv_plic_tl_rsp;
   tlul_pkg::tl_h2d_t       pinmux_tl_req;
@@ -736,6 +743,30 @@ module top_earlgrey #(
       .rst_ni (rstmgr_resets.rst_sys_n)
   );
 
+  aes #(
+    .AES192Enable(1'b1),
+    .Masking(Aes2Masking),
+    .SBoxImpl(Aes2SBoxImpl),
+    .SecStartTriggerDelay(SecAes2StartTriggerDelay),
+    .SecAllowForcingMasks(SecAes2AllowForcingMasks),
+    .SeedClearing(aes_pkg::DefaultSeedClearing),
+    .SeedMasking(aes_pkg::DefaultSeedMasking),
+    .AlertAsyncOn({aes_reg_pkg::NumAlerts{1'b1}})
+  ) u_aes2 (
+
+      // [2]: ctrl_err_update
+      // [3]: ctrl_err_storage
+      .alert_tx_o  ( alert_tx[3:2] ),
+      .alert_rx_i  ( alert_rx[3:2] ),
+
+      // Inter-module signals
+      .idle_o(clkmgr_idle[1]),
+      .tl_i(aes2_tl_req),
+      .tl_o(aes2_tl_rsp),
+      .clk_i (clkmgr_clocks.clk_main_aes2),
+      .rst_ni (rstmgr_resets.rst_sys_n)
+  );
+
   hmac u_hmac (
 
       // Interrupt
@@ -744,7 +775,7 @@ module top_earlgrey #(
       .intr_hmac_err_o   (intr_hmac_hmac_err),
 
       // Inter-module signals
-      .idle_o(clkmgr_idle[1]),
+      .idle_o(clkmgr_idle[2]),
       .tl_i(hmac_tl_req),
       .tl_o(hmac_tl_rsp),
       .clk_i (clkmgr_clocks.clk_main_hmac),
@@ -765,7 +796,7 @@ module top_earlgrey #(
       .keymgr_key_i(keymgr_kmac_key),
       .keymgr_kdf_i(keymgr_kmac_data_req),
       .keymgr_kdf_o(keymgr_kmac_data_rsp),
-      .idle_o(clkmgr_idle[2]),
+      .idle_o(clkmgr_idle[3]),
       .tl_i(kmac_tl_req),
       .tl_o(kmac_tl_rsp),
       .clk_i (clkmgr_clocks.clk_main_kmac),
@@ -1010,15 +1041,15 @@ module top_earlgrey #(
 
   sensor_ctrl u_sensor_ctrl (
 
-      // [2]: ast_alerts
-      // [3]: ast_alerts
       // [4]: ast_alerts
       // [5]: ast_alerts
       // [6]: ast_alerts
       // [7]: ast_alerts
       // [8]: ast_alerts
-      .alert_tx_o  ( alert_tx[8:2] ),
-      .alert_rx_i  ( alert_rx[8:2] ),
+      // [9]: ast_alerts
+      // [10]: ast_alerts
+      .alert_tx_o  ( alert_tx[10:4] ),
+      .alert_rx_i  ( alert_rx[10:4] ),
 
       // Inter-module signals
       .ast_alert_i(sensor_ctrl_ast_alert_req_i),
@@ -1036,10 +1067,10 @@ module top_earlgrey #(
       .intr_op_done_o (intr_keymgr_op_done),
       .intr_err_o     (intr_keymgr_err),
 
-      // [9]: fault_err
-      // [10]: operation_err
-      .alert_tx_o  ( alert_tx[10:9] ),
-      .alert_rx_i  ( alert_rx[10:9] ),
+      // [11]: fault_err
+      // [12]: operation_err
+      .alert_tx_o  ( alert_tx[12:11] ),
+      .alert_rx_i  ( alert_rx[12:11] ),
 
       // Inter-module signals
       .aes_key_o(),
@@ -1068,10 +1099,10 @@ module top_earlgrey #(
       .intr_otp_operation_done_o (intr_otp_ctrl_otp_operation_done),
       .intr_otp_error_o          (intr_otp_ctrl_otp_error),
 
-      // [11]: otp_macro_failure
-      // [12]: otp_check_failure
-      .alert_tx_o  ( alert_tx[12:11] ),
-      .alert_rx_i  ( alert_rx[12:11] ),
+      // [13]: otp_macro_failure
+      // [14]: otp_check_failure
+      .alert_tx_o  ( alert_tx[14:13] ),
+      .alert_rx_i  ( alert_rx[14:13] ),
 
       // Inter-module signals
       .otp_ast_pwr_seq_o(otp_ctrl_otp_ast_pwr_seq_o),
@@ -1110,14 +1141,14 @@ module top_earlgrey #(
       .intr_done_o (intr_otbn_done),
       .intr_err_o  (intr_otbn_err),
 
-      // [13]: imem_uncorrectable
-      // [14]: dmem_uncorrectable
-      // [15]: reg_uncorrectable
-      .alert_tx_o  ( alert_tx[15:13] ),
-      .alert_rx_i  ( alert_rx[15:13] ),
+      // [15]: imem_uncorrectable
+      // [16]: dmem_uncorrectable
+      // [17]: reg_uncorrectable
+      .alert_tx_o  ( alert_tx[17:15] ),
+      .alert_rx_i  ( alert_rx[17:15] ),
 
       // Inter-module signals
-      .idle_o(clkmgr_idle[3]),
+      .idle_o(clkmgr_idle[4]),
       .tl_i(otbn_tl_req),
       .tl_o(otbn_tl_rsp),
       .clk_i (clkmgr_clocks.clk_main_otbn),
@@ -1238,6 +1269,10 @@ module top_earlgrey #(
     // port: tl_aes
     .tl_aes_o(aes_tl_req),
     .tl_aes_i(aes_tl_rsp),
+
+    // port: tl_aes2
+    .tl_aes2_o(aes2_tl_req),
+    .tl_aes2_i(aes2_tl_rsp),
 
     // port: tl_rv_plic
     .tl_rv_plic_o(rv_plic_tl_req),

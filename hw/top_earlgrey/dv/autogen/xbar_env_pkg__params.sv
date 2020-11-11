@@ -31,6 +31,9 @@ tl_device_t xbar_devices[$] = '{
     '{"aes", '{
         '{32'h40110000, 32'h40110fff}
     }},
+    '{"aes2", '{
+        '{32'h400d0000, 32'h400d0fff}
+    }},
     '{"rv_plic", '{
         '{32'h40090000, 32'h40090fff}
     }},
@@ -116,6 +119,7 @@ tl_host_t xbar_hosts[$] = '{
         "ast_wrapper",
         "flash_ctrl",
         "aes",
+        "aes2",
         "hmac",
         "rv_plic",
         "pinmux",
@@ -144,6 +148,7 @@ tl_host_t xbar_hosts[$] = '{
         "ast_wrapper",
         "flash_ctrl",
         "aes",
+        "aes2",
         "hmac",
         "rv_plic",
         "pinmux",

@@ -94,6 +94,7 @@
         clocks:
         {
           clk_main_aes: main
+          clk_main_aes2: main
           clk_main_hmac: main
           clk_main_kmac: main
           clk_main_otbn: main
@@ -1099,6 +1100,196 @@
       ]
     }
     {
+      name: aes2
+      type: aes
+      clock_srcs:
+      {
+        clk_i: main
+      }
+      clock_group: trans
+      reset_connections:
+      {
+        rst_ni: sys
+      }
+      base_addr: 0x400D0000
+      clock_reset_export: []
+      clock_connections:
+      {
+        clk_i: clkmgr_clocks.clk_main_aes2
+      }
+      size: 0x1000
+      bus_device: tlul
+      bus_host: none
+      available_input_list: []
+      available_output_list: []
+      available_inout_list: []
+      param_list:
+      [
+        {
+          name: AES192Enable
+          type: bit
+          default: 1'b1
+          desc: Disable (0) or enable (1) support for 192-bit key lengths (AES-192).
+          local: "false"
+          expose: "false"
+          randcount: "0"
+          randtype: none
+          name_top: Aes2AES192Enable
+        }
+        {
+          name: Masking
+          type: bit
+          default: 1'b1
+          desc:
+            '''
+            Disable (0) or enable (1) first-order masking of the AES cipher core.
+            Masking requires the use of a masked S-Box, see SBoxImpl parameter.
+            '''
+          local: "false"
+          expose: "true"
+          randcount: "0"
+          randtype: none
+          name_top: Aes2Masking
+        }
+        {
+          name: SBoxImpl
+          type: aes_pkg::sbox_impl_e
+          default: aes_pkg::SBoxImplCanrightMasked
+          desc: Selection of the S-Box implementation. See aes_pkg.sv.
+          local: "false"
+          expose: "true"
+          randcount: "0"
+          randtype: none
+          name_top: Aes2SBoxImpl
+        }
+        {
+          name: SecStartTriggerDelay
+          type: int unsigned
+          default: "0"
+          desc:
+            '''
+            Manual start trigger delay, useful for SCA measurements.
+            A value of e.g. 40 allows the processor to go into sleep before AES starts operation.
+            '''
+          local: "false"
+          expose: "true"
+          randcount: "0"
+          randtype: none
+          name_top: SecAes2StartTriggerDelay
+        }
+        {
+          name: SecAllowForcingMasks
+          type: bit
+          default: 1'b0
+          desc:
+            '''
+            Forbid (0) or allow (1) forcing the mask to zero via FORCE_ZERO_MASK bit in the Control Register.
+            Useful for SCA measurements.
+            Meaningful only if masking is enabled.
+            '''
+          local: "false"
+          expose: "true"
+          randcount: "0"
+          randtype: none
+          name_top: SecAes2AllowForcingMasks
+        }
+        {
+          name: SeedClearing
+          type: logic [aes_pkg::WidthPRDClearing-1:0]
+          default: aes_pkg::DefaultSeedClearing
+          desc: Default seed of the PRNG used for register clearing.
+          local: "false"
+          expose: "false"
+          randcount: "0"
+          randtype: none
+          name_top: Aes2SeedClearing
+        }
+        {
+          name: SeedMasking
+          type: logic [aes_pkg::WidthPRDMasking-1:0]
+          default: aes_pkg::DefaultSeedMasking
+          desc: Default seed of the PRNG used for masking.
+          local: "false"
+          expose: "false"
+          randcount: "0"
+          randtype: none
+          name_top: Aes2SeedMasking
+        }
+        {
+          name: AlertAsyncOn
+          type: logic [aes_reg_pkg::NumAlerts-1:0]
+          default: "{aes_reg_pkg::NumAlerts{1'b1}}"
+          desc: One bit per alert specifying whether the corresponding sender in the AES module and the receiver in the alert handler are in the same clock domain (0) or whether there is an asynchronous boundary in between (1).
+          local: "false"
+          expose: "false"
+          randcount: "0"
+          randtype: none
+          name_top: Aes2AlertAsyncOn
+        }
+      ]
+      interrupt_list: []
+      alert_list:
+      [
+        {
+          name: ctrl_err_update
+          width: 1
+          bits: "0"
+          bitinfo:
+          [
+            1
+            1
+            0
+          ]
+          type: alert
+          async: 0
+        }
+        {
+          name: ctrl_err_storage
+          width: 1
+          bits: "1"
+          bitinfo:
+          [
+            2
+            1
+            1
+          ]
+          type: alert
+          async: 0
+        }
+      ]
+      wakeup_list: []
+      reset_request_list: []
+      scan: "false"
+      scan_reset: "false"
+      inter_signal_list:
+      [
+        {
+          name: idle
+          type: uni
+          act: req
+          package: ""
+          struct: logic
+          width: 1
+          inst_name: aes2
+          default: ""
+          top_signame: clkmgr_idle
+          index: 1
+        }
+        {
+          struct: tl
+          package: tlul_pkg
+          type: req_rsp
+          act: rsp
+          name: tl
+          inst_name: aes2
+          width: 1
+          default: ""
+          top_signame: aes2_tl
+          index: -1
+        }
+      ]
+    }
+    {
       name: hmac
       type: hmac
       clock_srcs:
@@ -1179,7 +1370,7 @@
           inst_name: hmac
           default: ""
           top_signame: clkmgr_idle
-          index: 1
+          index: 2
         }
         {
           struct: tl
@@ -1337,7 +1528,7 @@
           inst_name: kmac
           default: ""
           top_signame: clkmgr_idle
-          index: 2
+          index: 3
         }
         {
           struct: tl
@@ -2144,7 +2335,7 @@
           name: idle
           act: rcv
           package: ""
-          width: 4
+          width: 5
           inst_name: clkmgr
           default: ""
           top_type: one-to-N
@@ -3302,7 +3493,7 @@
           default: ""
           package: ""
           top_signame: clkmgr_idle
-          index: 3
+          index: 4
         }
         {
           struct: tl
@@ -3530,6 +3721,7 @@
       clkmgr.idle:
       [
         aes.idle
+        aes2.idle
         hmac.idle
         kmac.idle
         otbn.idle
@@ -3573,6 +3765,10 @@
       aes.tl:
       [
         main.tl_aes
+      ]
+      aes2.tl:
+      [
+        main.tl_aes2
       ]
       rv_plic.tl:
       [
@@ -3717,6 +3913,7 @@
           peri
           flash_ctrl
           aes
+          aes2
           hmac
           rv_plic
           pinmux
@@ -3735,6 +3932,7 @@
           peri
           flash_ctrl
           aes
+          aes2
           hmac
           rv_plic
           pinmux
@@ -3958,6 +4156,24 @@
           [
             {
               base_addr: 0x40110000
+              size_byte: 0x1000
+            }
+          ]
+          xbar: false
+          stub: false
+          pipeline: "true"
+        }
+        {
+          name: aes2
+          type: device
+          clock: clk_main_i
+          reset: rst_main_ni
+          pipeline_byp: "false"
+          inst_type: aes
+          addr_range:
+          [
+            {
+              base_addr: 0x400D0000
               size_byte: 0x1000
             }
           ]
@@ -4236,6 +4452,18 @@
           width: 1
           default: ""
           top_signame: aes_tl
+          index: -1
+        }
+        {
+          struct: tl
+          type: req_rsp
+          name: tl_aes2
+          act: req
+          package: tlul_pkg
+          inst_name: main
+          width: 1
+          default: ""
+          top_signame: aes2_tl
           index: -1
         }
         {
@@ -6142,10 +6370,34 @@
         package: ""
         struct: logic
         width: 1
-        inst_name: hmac
+        inst_name: aes2
         default: ""
         top_signame: clkmgr_idle
         index: 1
+      }
+      {
+        struct: tl
+        package: tlul_pkg
+        type: req_rsp
+        act: rsp
+        name: tl
+        inst_name: aes2
+        width: 1
+        default: ""
+        top_signame: aes2_tl
+        index: -1
+      }
+      {
+        name: idle
+        type: uni
+        act: req
+        package: ""
+        struct: logic
+        width: 1
+        inst_name: hmac
+        default: ""
+        top_signame: clkmgr_idle
+        index: 2
       }
       {
         struct: tl
@@ -6193,7 +6445,7 @@
         inst_name: kmac
         default: ""
         top_signame: clkmgr_idle
-        index: 2
+        index: 3
       }
       {
         struct: tl
@@ -6621,7 +6873,7 @@
         name: idle
         act: rcv
         package: ""
-        width: 4
+        width: 5
         inst_name: clkmgr
         default: ""
         top_type: one-to-N
@@ -7006,7 +7258,7 @@
         default: ""
         package: ""
         top_signame: clkmgr_idle
-        index: 3
+        index: 4
       }
       {
         struct: tl
@@ -7222,6 +7474,18 @@
         width: 1
         default: ""
         top_signame: aes_tl
+        index: -1
+      }
+      {
+        struct: tl
+        type: req_rsp
+        name: tl_aes2
+        act: req
+        package: tlul_pkg
+        inst_name: main
+        width: 1
+        default: ""
+        top_signame: aes2_tl
         index: -1
       }
       {
@@ -7757,7 +8021,7 @@
         package: ""
         struct: logic
         signame: clkmgr_idle
-        width: 4
+        width: 5
         type: uni
         default: ""
       }
@@ -7901,6 +8165,22 @@
         package: tlul_pkg
         struct: tl_d2h
         signame: aes_tl_rsp
+        width: 1
+        type: req_rsp
+        default: ""
+      }
+      {
+        package: tlul_pkg
+        struct: tl_h2d
+        signame: aes2_tl_req
+        width: 1
+        type: req_rsp
+        default: ""
+      }
+      {
+        package: tlul_pkg
+        struct: tl_d2h
+        signame: aes2_tl_rsp
         width: 1
         type: req_rsp
         default: ""
