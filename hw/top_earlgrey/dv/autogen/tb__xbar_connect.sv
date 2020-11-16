@@ -39,15 +39,14 @@ tl_if ram_main_tl_if(clk_main, rst_n);
 tl_if eflash_tl_if(clk_main, rst_n);
 tl_if flash_ctrl_tl_if(clk_main, rst_n);
 tl_if hmac_tl_if(clk_main, rst_n);
-tl_if kmac_tl_if(clk_main, rst_n);
+tl_if ise_tl_if(clk_main, rst_n);
+tl_if ipc_tl_if(clk_main, rst_n);
 tl_if aes_tl_if(clk_main, rst_n);
-tl_if aes2_tl_if(clk_main, rst_n);
 tl_if rv_plic_tl_if(clk_main, rst_n);
 tl_if pinmux_tl_if(clk_main, rst_n);
 tl_if padctrl_tl_if(clk_main, rst_n);
 tl_if alert_handler_tl_if(clk_main, rst_n);
 tl_if nmi_gen_tl_if(clk_main, rst_n);
-tl_if otbn_tl_if(clk_main, rst_n);
 tl_if keymgr_tl_if(clk_main, rst_n);
 tl_if uart_tl_if(clk_io_div4, rst_n);
 tl_if gpio_tl_if(clk_io_div4, rst_n);
@@ -95,15 +94,14 @@ initial begin
     `DRIVE_CHIP_TL_DEVICE_IF(eflash, tl_adapter_eflash, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(flash_ctrl, flash_ctrl, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(hmac, hmac, tl)
-    `DRIVE_CHIP_TL_DEVICE_IF(kmac, kmac, tl)
+    `DRIVE_CHIP_TL_DEVICE_IF(ise, ise, tl)
+    `DRIVE_CHIP_TL_DEVICE_IF(ipc, ipc, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(aes, aes, tl)
-    `DRIVE_CHIP_TL_DEVICE_IF(aes2, aes2, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(rv_plic, rv_plic, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(pinmux, pinmux, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(padctrl, padctrl, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(alert_handler, alert_handler, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(nmi_gen, nmi_gen, tl)
-    `DRIVE_CHIP_TL_DEVICE_IF(otbn, otbn, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(keymgr, keymgr, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(uart, uart, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(gpio, gpio, tl)

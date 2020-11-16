@@ -16,7 +16,17 @@
   // Different dashboard output path for each tool
   rel_path: "hw/top_earlgrey/lint/{tool}"
 
-  use_cfgs: [{    name: aes
+  use_cfgs: [{    name: ise
+                  fusesoc_core: lowrisc:ip:ise
+                  import_cfgs: ["{proj_root}/hw/lint/tools/dvsim/common_lint_cfg.hjson"]
+                  rel_path: "hw/ip/ise/lint/{tool}"
+             },
+             {    name: ipc
+                  fusesoc_core: lowrisc:ip:ipc
+                  import_cfgs: ["{proj_root}/hw/lint/tools/dvsim/common_lint_cfg.hjson"]
+                  rel_path: "hw/ip/ipc/lint/{tool}"
+             },
+             {    name: aes
                   fusesoc_core: lowrisc:ip:aes
                   import_cfgs: ["{proj_root}/hw/lint/tools/dvsim/common_lint_cfg.hjson"]
                   rel_path: "hw/ip/aes/lint/{tool}"
@@ -82,11 +92,6 @@
                   fusesoc_core: lowrisc:ip:nmi_gen
                   import_cfgs: ["{proj_root}/hw/lint/tools/dvsim/common_lint_cfg.hjson"]
                   rel_path: "hw/ip/nmi_gen/lint/{tool}"
-             },
-             {    name: otbn
-                  fusesoc_core: lowrisc:ip:otbn
-                  import_cfgs: ["{proj_root}/hw/lint/tools/dvsim/common_lint_cfg.hjson"]
-                  rel_path: "hw/ip/otbn/lint/{tool}"
              },
              {    name: otp_ctrl
                   fusesoc_core: lowrisc:ip:otp_ctrl

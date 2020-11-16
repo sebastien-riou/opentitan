@@ -10,7 +10,9 @@ REG_OUTPUT_DIR    ?= ${PRJ_DIR}/build/regs-generated
 REG_OUTPUT_DV_DIR ?= ${REG_OUTPUT_DIR}/dv
 REG_OUTPUT_SW_DIR ?= ${REG_OUTPUT_DIR}/sw
 
-IPS ?= aes           \
+IPS ?= ise           \
+       ipc           \
+       aes           \
        alert_handler \
        clkmgr        \
        entropy_src   \

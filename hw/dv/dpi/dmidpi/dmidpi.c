@@ -384,7 +384,7 @@ void *dmidpi_create(const char *display_name, int listen_port) {
 
   printf(
       "\n"
-      "JTAG: Virtual JTAG interface %s is listening on port %d. Use\n"
+      "DMI DPI: Virtual JTAG interface %s is listening on port %d. Use\n"
       "OpenOCD and the following configuration to connect:\n"
       "  interface remote_bitbang\n"
       "  remote_bitbang_host localhost\n"

@@ -68,23 +68,23 @@ module xbar_main_bind;
     .h2d    (tl_hmac_o),
     .d2h    (tl_hmac_i)
   );
-  bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_kmac (
+  bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_ise (
     .clk_i  (clk_main_i),
     .rst_ni (rst_main_ni),
-    .h2d    (tl_kmac_o),
-    .d2h    (tl_kmac_i)
+    .h2d    (tl_ise_o),
+    .d2h    (tl_ise_i)
+  );
+  bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_ipc (
+    .clk_i  (clk_main_i),
+    .rst_ni (rst_main_ni),
+    .h2d    (tl_ipc_o),
+    .d2h    (tl_ipc_i)
   );
   bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_aes (
     .clk_i  (clk_main_i),
     .rst_ni (rst_main_ni),
     .h2d    (tl_aes_o),
     .d2h    (tl_aes_i)
-  );
-  bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_aes2 (
-    .clk_i  (clk_main_i),
-    .rst_ni (rst_main_ni),
-    .h2d    (tl_aes2_o),
-    .d2h    (tl_aes2_i)
   );
   bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_rv_plic (
     .clk_i  (clk_main_i),
@@ -115,12 +115,6 @@ module xbar_main_bind;
     .rst_ni (rst_main_ni),
     .h2d    (tl_nmi_gen_o),
     .d2h    (tl_nmi_gen_i)
-  );
-  bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_otbn (
-    .clk_i  (clk_main_i),
-    .rst_ni (rst_main_ni),
-    .h2d    (tl_otbn_o),
-    .d2h    (tl_otbn_i)
   );
   bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_keymgr (
     .clk_i  (clk_main_i),

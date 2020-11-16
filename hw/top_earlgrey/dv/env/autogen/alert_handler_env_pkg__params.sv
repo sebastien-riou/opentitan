@@ -7,9 +7,6 @@
 parameter string LIST_OF_ALERTS[] = {
   "aes_ctrl_err_update",
   "aes_ctrl_err_storage",
-  "otbn_imem_uncorrectable",
-  "otbn_dmem_uncorrectable",
-  "otbn_reg_uncorrectable",
   "sensor_ctrl_ast_alerts",
   "keymgr_fault_err",
   "keymgr_operation_err",
@@ -17,4 +14,4 @@ parameter string LIST_OF_ALERTS[] = {
   "otp_ctrl_otp_check_failure"
 };
 
-parameter uint NUM_ALERTS = 10;
+parameter uint NUM_ALERTS = 7;

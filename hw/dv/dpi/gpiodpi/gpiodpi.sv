@@ -60,7 +60,7 @@ module gpiodpi
    // clock posedges; this should be kept reasonably high, since each
    // tick call will perform at least one syscall.
    localparam MAX_COUNT = 2048;
-   logic [$clog2(MAX_COUNT)-1:0] counter;
+   logic [$clog2(MAX_COUNT-1):0] counter;
 
    assign gpio_write_pulse = counter == MAX_COUNT -1;
 

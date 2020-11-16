@@ -1,0 +1,11 @@
+// Copyright lowRISC contributors.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+//
+// waiver file for ise
+
+`verilator_config
+
+lint_off -rule UNUSED -file "*/rtl/gpo.sv"
+lint_off -file "*/rtl/ibex_core.sv"
+lint_off -rule UNOPTFLAT -file "*/rtl/ibex_csr.sv"

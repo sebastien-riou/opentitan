@@ -75,19 +75,19 @@
     }
     { struct: "tl"
       type:   "req_rsp"
-      name:   "tl_kmac"
+      name:   "tl_ise"
+      act:    "req"
+      package: "tlul_pkg"
+    }
+    { struct: "tl"
+      type:   "req_rsp"
+      name:   "tl_ipc"
       act:    "req"
       package: "tlul_pkg"
     }
     { struct: "tl"
       type:   "req_rsp"
       name:   "tl_aes"
-      act:    "req"
-      package: "tlul_pkg"
-    }
-    { struct: "tl"
-      type:   "req_rsp"
-      name:   "tl_aes2"
       act:    "req"
       package: "tlul_pkg"
     }
@@ -118,12 +118,6 @@
     { struct: "tl"
       type:   "req_rsp"
       name:   "tl_nmi_gen"
-      act:    "req"
-      package: "tlul_pkg"
-    }
-    { struct: "tl"
-      type:   "req_rsp"
-      name:   "tl_otbn"
       act:    "req"
       package: "tlul_pkg"
     }

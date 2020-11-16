@@ -95,7 +95,7 @@ class chip_env_cfg extends cip_base_env_cfg #(.RAL_T(chip_reg_block));
     // initialize the sw_images.
     sw_images[SwTypeRom] = "rom";
     sw_images[SwTypeTest] = "sw";
-    sw_images[SwTypeOtbn] = "otbn";
+    //sw_images[SwTypeOtbn] = "otbn";
   endfunction
 
   // ral flow is limited in terms of setting correct field access policies and reset values

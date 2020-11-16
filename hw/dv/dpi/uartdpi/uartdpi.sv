@@ -59,8 +59,8 @@ module uartdpi #(
     end else begin
       if (!txactive) begin
         tx_o <= 1;
-        if (uartdpi_can_read(ctx)) begin
-          automatic int c = uartdpi_read(ctx);
+        if (uartdpi_can_read(ctx)!=0) begin
+          automatic int c = {24'h0,uartdpi_read(ctx)};
           txsymbol <= {1'b1, c[7:0], 1'b0};
           txactive <= 1;
           txcount <= 0;
@@ -118,7 +118,7 @@ module uartdpi #(
           if (rxcyccount == CYCLES_PER_SYMBOL) begin
             rxactive <= 0;
             if (rx_i) begin
-              uartdpi_write(ctx, rxsymbol);
+              uartdpi_write(ctx, {24'h0,rxsymbol});
             end
           end
         end

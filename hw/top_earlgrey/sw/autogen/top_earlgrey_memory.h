@@ -58,7 +58,7 @@
 /**
  * Memory size for eflash in top earlgrey.
  */
-#define TOP_EARLGREY_EFLASH_SIZE_BYTES 0x80000
+#define TOP_EARLGREY_EFLASH_SIZE_BYTES 0x10000
 
 
 #endif  // __ASSEMBLER__

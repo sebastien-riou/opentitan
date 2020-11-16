@@ -36,6 +36,34 @@ sw_lib_pinmux = declare_dependency(
   )
 )
 
+# ISE library (sw_lib_ise)
+sw_lib_ise = declare_dependency(
+  link_with: static_library(
+    'ise_ot',
+    sources: [
+      hw_ip_ise_reg_h,
+      'ise.c',
+    ],
+    dependencies: [
+      top_earlgrey,
+    ]
+  )
+)
+
+# IPC library (sw_lib_ipc)
+sw_lib_ipc = declare_dependency(
+  link_with: static_library(
+    'ipc_ot',
+    sources: [
+      hw_ip_ipc_reg_h,
+      'ipc.c',
+    ],
+    dependencies: [
+      top_earlgrey,
+    ]
+  )
+)
+
 # AES library (sw_lib_aes)
 sw_lib_aes = declare_dependency(
   link_with: static_library(

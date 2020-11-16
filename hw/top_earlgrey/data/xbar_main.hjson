@@ -72,19 +72,19 @@
       reset:     "rst_main_ni",
       pipeline_byp: "false"
     },
-    { name:         "kmac"
-      type:         "device"
-      clock:        "clk_main_i"
-      rset:         "rst_main_ni"
-      pipeline_byp: "false"
-    }
-    { name:      "aes",
+    { name:      "ise",
       type:      "device",
       clock:     "clk_main_i"
       reset:     "rst_main_ni"
       pipeline_byp: "false"
     },
-    { name:      "aes2",
+    { name:      "ipc",
+      type:      "device",
+      clock:     "clk_main_i"
+      reset:     "rst_main_ni"
+      pipeline_byp: "false"
+    },
+    { name:      "aes",
       type:      "device",
       clock:     "clk_main_i"
       reset:     "rst_main_ni"
@@ -137,12 +137,6 @@
       inst_type: "nmi_gen",
       pipeline_byp: "false"
     }
-    { name:      "otbn",
-      type:      "device",
-      clock:     "clk_main_i"
-      reset:     "rst_main_ni"
-      pipeline_byp: "false"
-    },
     { name:      "keymgr",
       type:      "device",
       clock:     "clk_main_i"
@@ -153,8 +147,8 @@
   connections: {
     corei:  ["rom", "debug_mem", "ram_main", "eflash"],
     cored:  ["rom", "debug_mem", "ram_main", "eflash", "peri", "flash_ctrl",
-    "aes", "aes2", "hmac", "rv_plic", "pinmux", "padctrl", "alert_handler", "nmi_gen", "otbn", "keymgr", "kmac"],
+    "ise", "ipc", "aes", "hmac", "rv_plic", "pinmux", "padctrl", "alert_handler", "nmi_gen", "keymgr"],
     dm_sba: ["rom",              "ram_main", "eflash", "peri", "flash_ctrl",
-    "aes", "aes2", "hmac", "rv_plic", "pinmux", "padctrl", "alert_handler", "nmi_gen", "otbn", "kmac"],
+    "ise", "ipc", "aes", "hmac", "rv_plic", "pinmux", "padctrl", "alert_handler", "nmi_gen"],
   },
 }

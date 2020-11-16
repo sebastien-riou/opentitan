@@ -21,10 +21,10 @@ filesets:
       - lowrisc:ip:rv_timer
       - lowrisc:ip:tlul
       - lowrisc:ip:spi_device
+      - lowrisc:ip:ise
+      - lowrisc:ip:ipc
       - lowrisc:ip:aes
       - lowrisc:ip:hmac
-      - lowrisc:ip:kmac
-      - lowrisc:ip:otbn
       - lowrisc:prim:ram_1p_adv
       - lowrisc:prim:rom_adv
       - lowrisc:prim:flash

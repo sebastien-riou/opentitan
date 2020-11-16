@@ -8,14 +8,14 @@ package flash_ctrl_reg_pkg;
 
   // Param list
   parameter int RegNumBanks = 2;
-  parameter int RegPagesPerBank = 256;
+  parameter int RegPagesPerBank = 32;
   parameter int NumRegions = 8;
   parameter int NumInfos0 = 4;
   parameter int NumInfos1 = 4;
   parameter int WordsPerPage = 128;
   parameter int BytesPerWord = 8;
   parameter int BytesPerPage = 1024;
-  parameter int BytesPerBank = 262144;
+  parameter int BytesPerBank = 32768;
 
   ////////////////////////////
   // Typedefs for registers //

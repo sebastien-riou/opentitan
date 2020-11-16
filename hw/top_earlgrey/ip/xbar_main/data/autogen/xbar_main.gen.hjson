@@ -43,17 +43,16 @@
       eflash
       peri
       flash_ctrl
+      ise
+      ipc
       aes
-      aes2
       hmac
       rv_plic
       pinmux
       padctrl
       alert_handler
       nmi_gen
-      otbn
       keymgr
-      kmac
     ]
     dm_sba:
     [
@@ -62,16 +61,15 @@
       eflash
       peri
       flash_ctrl
+      ise
+      ipc
       aes
-      aes2
       hmac
       rv_plic
       pinmux
       padctrl
       alert_handler
       nmi_gen
-      otbn
-      kmac
     ]
   }
   nodes:
@@ -174,7 +172,7 @@
       [
         {
           base_addr: 0x20000000
-          size_byte: 0x80000
+          size_byte: 0x10000
         }
       ]
       xbar: false
@@ -259,16 +257,34 @@
       pipeline: "true"
     }
     {
-      name: kmac
+      name: ise
       type: device
       clock: clk_main_i
-      rset: rst_main_ni
+      reset: rst_main_ni
       pipeline_byp: "false"
-      inst_type: kmac
+      inst_type: ise
       addr_range:
       [
         {
-          base_addr: 0x41120000
+          base_addr: 0x400F0000
+          size_byte: 0x1000
+        }
+      ]
+      xbar: false
+      stub: false
+      pipeline: "true"
+    }
+    {
+      name: ipc
+      type: device
+      clock: clk_main_i
+      reset: rst_main_ni
+      pipeline_byp: "false"
+      inst_type: ipc
+      addr_range:
+      [
+        {
+          base_addr: 0x400E0000
           size_byte: 0x1000
         }
       ]
@@ -287,24 +303,6 @@
       [
         {
           base_addr: 0x40110000
-          size_byte: 0x1000
-        }
-      ]
-      xbar: false
-      stub: false
-      pipeline: "true"
-    }
-    {
-      name: aes2
-      type: device
-      clock: clk_main_i
-      reset: rst_main_ni
-      pipeline_byp: "false"
-      inst_type: aes
-      addr_range:
-      [
-        {
-          base_addr: 0x400D0000
           size_byte: 0x1000
         }
       ]
@@ -394,24 +392,6 @@
         {
           base_addr: 0x40140000
           size_byte: 0x1000
-        }
-      ]
-      xbar: false
-      stub: false
-      pipeline: "true"
-    }
-    {
-      name: otbn
-      type: device
-      clock: clk_main_i
-      reset: rst_main_ni
-      pipeline_byp: "false"
-      inst_type: otbn
-      addr_range:
-      [
-        {
-          base_addr: 0x50000000
-          size_byte: 0x400000
         }
       ]
       xbar: false

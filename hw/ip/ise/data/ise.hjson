@@ -1,0 +1,37 @@
+// Copyright lowRISC contributors.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+{
+  name: "ise",
+  clock_primary: "clk_i",
+  bus_device: "tlul",
+  bus_host: "",
+  regwidth: "32",
+  registers: [
+    { name: "DATA0",
+      desc: "DATA0",
+      swaccess: "rw",
+      hwaccess: "none",
+      fields: [
+        { bits: "31:0" }
+      ],
+    },
+    { name: "DATA1",
+      desc: "DATA1",
+      swaccess: "rw",
+      hwaccess: "none",
+      fields: [
+        { bits: "31:0" }
+      ],
+    },
+    { name: "STATUS",
+      desc: "STATUS",
+      swaccess: "ro",
+      hwaccess: "hwo",
+      hwext: "true",
+      fields: [
+        { bits: "31:0" }
+      ],
+    },
+  ],
+}

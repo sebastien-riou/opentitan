@@ -17,7 +17,7 @@ tl_device_t xbar_devices[$] = '{
         '{32'h10000000, 32'h1000ffff}
     }},
     '{"eflash", '{
-        '{32'h20000000, 32'h2007ffff}
+        '{32'h20000000, 32'h2000ffff}
     }},
     '{"peri", '{
         '{32'h18000000, 32'h18000fff},
@@ -34,14 +34,14 @@ tl_device_t xbar_devices[$] = '{
     '{"hmac", '{
         '{32'h40120000, 32'h40120fff}
     }},
-    '{"kmac", '{
-        '{32'h41120000, 32'h41120fff}
+    '{"ise", '{
+        '{32'h400f0000, 32'h400f0fff}
+    }},
+    '{"ipc", '{
+        '{32'h400e0000, 32'h400e0fff}
     }},
     '{"aes", '{
         '{32'h40110000, 32'h40110fff}
-    }},
-    '{"aes2", '{
-        '{32'h400d0000, 32'h400d0fff}
     }},
     '{"rv_plic", '{
         '{32'h40090000, 32'h40090fff}
@@ -57,9 +57,6 @@ tl_device_t xbar_devices[$] = '{
     }},
     '{"nmi_gen", '{
         '{32'h40140000, 32'h40140fff}
-    }},
-    '{"otbn", '{
-        '{32'h50000000, 32'h503fffff}
     }},
     '{"keymgr", '{
         '{32'h401a0000, 32'h401a0fff}
@@ -80,17 +77,16 @@ tl_host_t xbar_hosts[$] = '{
         "eflash",
         "peri",
         "flash_ctrl",
+        "ise",
+        "ipc",
         "aes",
-        "aes2",
         "hmac",
         "rv_plic",
         "pinmux",
         "padctrl",
         "alert_handler",
         "nmi_gen",
-        "otbn",
-        "keymgr",
-        "kmac"}}
+        "keymgr"}}
     ,
     '{"dm_sba", 2, '{
         "rom",
@@ -98,14 +94,13 @@ tl_host_t xbar_hosts[$] = '{
         "eflash",
         "peri",
         "flash_ctrl",
+        "ise",
+        "ipc",
         "aes",
-        "aes2",
         "hmac",
         "rv_plic",
         "pinmux",
         "padctrl",
         "alert_handler",
-        "nmi_gen",
-        "otbn",
-        "kmac"}}
+        "nmi_gen"}}
 };

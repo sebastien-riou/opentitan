@@ -62,6 +62,26 @@ package top_earlgrey_pkg;
   parameter int unsigned TOP_EARLGREY_RV_TIMER_SIZE_BYTES = 32'h1000;
 
   /**
+   * Peripheral base address for ise in top earlgrey.
+   */
+  parameter int unsigned TOP_EARLGREY_ISE_BASE_ADDR = 32'h400F0000;
+
+  /**
+   * Peripheral size in bytes for ise in top earlgrey.
+   */
+  parameter int unsigned TOP_EARLGREY_ISE_SIZE_BYTES = 32'h1000;
+
+  /**
+   * Peripheral base address for ipc in top earlgrey.
+   */
+  parameter int unsigned TOP_EARLGREY_IPC_BASE_ADDR = 32'h400E0000;
+
+  /**
+   * Peripheral size in bytes for ipc in top earlgrey.
+   */
+  parameter int unsigned TOP_EARLGREY_IPC_SIZE_BYTES = 32'h1000;
+
+  /**
    * Peripheral base address for aes in top earlgrey.
    */
   parameter int unsigned TOP_EARLGREY_AES_BASE_ADDR = 32'h40110000;
@@ -72,16 +92,6 @@ package top_earlgrey_pkg;
   parameter int unsigned TOP_EARLGREY_AES_SIZE_BYTES = 32'h1000;
 
   /**
-   * Peripheral base address for aes2 in top earlgrey.
-   */
-  parameter int unsigned TOP_EARLGREY_AES2_BASE_ADDR = 32'h400D0000;
-
-  /**
-   * Peripheral size in bytes for aes2 in top earlgrey.
-   */
-  parameter int unsigned TOP_EARLGREY_AES2_SIZE_BYTES = 32'h1000;
-
-  /**
    * Peripheral base address for hmac in top earlgrey.
    */
   parameter int unsigned TOP_EARLGREY_HMAC_BASE_ADDR = 32'h40120000;
@@ -90,16 +100,6 @@ package top_earlgrey_pkg;
    * Peripheral size in bytes for hmac in top earlgrey.
    */
   parameter int unsigned TOP_EARLGREY_HMAC_SIZE_BYTES = 32'h1000;
-
-  /**
-   * Peripheral base address for kmac in top earlgrey.
-   */
-  parameter int unsigned TOP_EARLGREY_KMAC_BASE_ADDR = 32'h41120000;
-
-  /**
-   * Peripheral size in bytes for kmac in top earlgrey.
-   */
-  parameter int unsigned TOP_EARLGREY_KMAC_SIZE_BYTES = 32'h1000;
 
   /**
    * Peripheral base address for rv_plic in top earlgrey.
@@ -222,16 +222,6 @@ package top_earlgrey_pkg;
   parameter int unsigned TOP_EARLGREY_OTP_CTRL_SIZE_BYTES = 32'h4000;
 
   /**
-   * Peripheral base address for otbn in top earlgrey.
-   */
-  parameter int unsigned TOP_EARLGREY_OTBN_BASE_ADDR = 32'h50000000;
-
-  /**
-   * Peripheral size in bytes for otbn in top earlgrey.
-   */
-  parameter int unsigned TOP_EARLGREY_OTBN_SIZE_BYTES = 32'h400000;
-
-  /**
    * Memory base address for rom in top earlgrey.
    */
   parameter int unsigned TOP_EARLGREY_ROM_BASE_ADDR = 32'h00008000;
@@ -269,7 +259,7 @@ package top_earlgrey_pkg;
   /**
    * Memory size for eflash in top earlgrey.
    */
-  parameter int unsigned TOP_EARLGREY_EFLASH_SIZE_BYTES = 32'h80000;
+  parameter int unsigned TOP_EARLGREY_EFLASH_SIZE_BYTES = 32'h10000;
 
   // Enumeration for DIO pins.
   typedef enum {
