@@ -10,15 +10,12 @@ module top_earlgrey_artya7  #(
   // Clock and Reset
   input               IO_CLK,
   input               IO_RST_N,
-  // JTAG interface -- not hooked up at the moment
-  // inout               IO_DPS0, // IO_JTCK,    IO_SDCK
-  // inout               IO_DPS3, // IO_JTMS,    IO_SDCSB
-  // inout               IO_DPS1, // IO_JTDI,    IO_SDSDI
-  // inout               IO_DPS4, // IO_JTRST_N,
-  // inout               IO_DPS5, // IO_JSRST_N,
-  // inout               IO_DPS2, // IO_JTDO,    IO_SDO
-  // inout               IO_DPS6, // JTAG=1,     SPI=0
-  // inout               IO_DPS7, // BOOTSTRAP=1
+  // JTAG interface
+  input               IO_JTCK,
+  input               IO_JTMS,
+  input               IO_JTDI,
+  input               IO_JTRST_N,
+  output              IO_JTDO,
   // UART interface
   inout               IO_URX,
   inout               IO_UTX,
@@ -126,21 +123,24 @@ module top_earlgrey_artya7  #(
     .dio_attr_i          ( dio_attr         )
   );
 
-  //////////////////////
-  // JTAG Overlay Mux //
-  //////////////////////
-
-  // Unlike nexysvideo, there is currently no dedicated
-  // JTAG port available, hence tie off.
   logic jtag_trst_n, jtag_srst_n;
   logic jtag_tck, jtag_tck_buf, jtag_tms, jtag_tdi, jtag_tdo;
 
-  assign jtag_trst_n = 1'b1;
-  assign jtag_srst_n = 1'b1;
-  assign jtag_tck = 1'b0;
-  assign jtag_tck_buf = 1'b0;
-  assign jtag_tms = 1'b0;
-  assign jtag_tdi = 1'b0;
+  assign jtag_trst_n  = IO_JTRST_N;
+  assign jtag_srst_n  = 1'b1;
+  assign jtag_tck     = IO_JTCK;
+  assign jtag_tms     = IO_JTMS;
+  assign jtag_tdi     = IO_JTDI;
+  assign IO_JTDO      = jtag_tdo;
+
+  ////////////////////////////////
+  // JTAG clock buffer for FPGA //
+  ////////////////////////////////
+
+  BUFG jtag_buf (
+    .I (jtag_tck),
+    .O (jtag_tck_buf)
+  );
 
   assign mio_in_core  = mio_in_padring;
   assign mio_out_padring = mio_out_core;

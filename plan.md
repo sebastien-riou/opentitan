@@ -38,3 +38,26 @@ general guide is here: https://docs.opentitan.org/hw/top_earlgrey/ search "Addin
 ### Make a custom IP
 - add it in IP list in `hw/Makefile`
 - add it in top level meson.build (hw_ip_ipc_reg_h = gen_hw_hdr.process('hw/ip/ipc/data/ipc.hjson'))
+
+
+### Debug on Artya7 FPGA:
+
+````
+fusesoc --cores-root . run --flag=fileset_top --target=synth lowrisc:systems:top_earlgrey_artya7-100
+````
+or
+````
+fusesoc --cores-root . pgm lowrisc:systems:top_earlgrey_artya7-100:0.1
+````
+
+monitor serial output:
+````
+picocom --baud=115200 /dev/ttyUSB2
+````
+
+run openocd:
+````
+/tools/openocd/bin/openocd -s util/openocd -f board/lowrisc-earlgrey-artya7.cfg
+````
+
+connect in eclipse
