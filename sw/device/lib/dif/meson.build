@@ -116,18 +116,18 @@ sw_lib_dif_hmac = declare_dependency(
 )
 
 # OTBN DIF library
-sw_lib_dif_otbn = declare_dependency(
-  link_with: static_library(
-    'sw_lib_dif_otbn',
-    sources: [
-      hw_ip_otbn_reg_h,
-      'dif_otbn.c',
-    ],
-    dependencies: [
-      sw_lib_mmio,
-    ],
-  )
-)
+#sw_lib_dif_otbn = declare_dependency(
+#  link_with: static_library(
+#    'sw_lib_dif_otbn',
+#    sources: [
+#      hw_ip_otbn_reg_h,
+#      'dif_otbn.c',
+#    ],
+#    dependencies: [
+#      sw_lib_mmio,
+#    ],
+#  )
+#)
 
 # Reset Manager DIF library (dif_rstmgr)
 sw_lib_dif_rstmgr = declare_dependency(

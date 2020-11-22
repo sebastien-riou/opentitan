@@ -79,18 +79,18 @@ sw_lib_aes = declare_dependency(
 )
 
 # AES2 library (sw_lib_aes2)
-sw_lib_aes2 = declare_dependency(
-  link_with: static_library(
-    'aes2_ot',
-    sources: [
-      hw_ip_aes_reg_h,
-      'aes2.c',
-    ],
-    dependencies: [
-      top_earlgrey,
-    ]
-  )
-)
+#sw_lib_aes2 = declare_dependency(
+#  link_with: static_library(
+#    'aes2_ot',
+#    sources: [
+#      hw_ip_aes_reg_h,
+#      'aes2.c',
+#    ],
+#    dependencies: [
+#      top_earlgrey,
+#    ]
+#  )
+#)
 
 # HMAC library (sw_lib_hmac)
 sw_lib_hmac = declare_dependency(

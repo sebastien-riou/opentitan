@@ -24,6 +24,7 @@ embedded_target_extra_link_args = [
   '-Wl,--build-id=none',
 ]
 
+subdir('ram_code')
 subdir('boot_rom')
 subdir('rom_exts')
 subdir('mask_rom')

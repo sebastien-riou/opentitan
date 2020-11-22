@@ -2,10 +2,6 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
-/**
- * Boot ROM runtime initialization code.
- */
-
   // NOTE: The "ax" flag below is necessary to ensure that this section
   // is allocated executable space in ROM by the linker.
   .section .crt, "ax"
@@ -18,7 +14,6 @@
  */
 _reset_start:
   .globl _reset_start
-  call _ram_start
   // Clobber all writeable registers.
   li  x1, 0x0
   li  x2, 0x0
@@ -72,6 +67,7 @@ _reset_start:
  */
 _start:
   .globl _start
+
   // Zero out the `.bss` segment.
   //
   // We use `t0` and `t1` to represent the start and end pointers
@@ -124,9 +120,9 @@ data_copy_loop_end:
   li t3, 0x0
 
   // Jump into the C program entry point.
-  call _boot_start
+  call main
 
-  // Loop forever if _boot_start somehow returns.
+  // Loop forever if main somehow returns.
 1:
   wfi
   j 1b

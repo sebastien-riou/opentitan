@@ -3,7 +3,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 /**
- * Linker script for an OpenTitan boot ROM.
+ * Linker script for an OpenTitan RAM code.
  *
  * Portions of this file are Ibex-specific.
  */
@@ -22,25 +22,20 @@ INCLUDE hw/top_earlgrey/sw/autogen/top_earlgrey_memory.ld
  * The boot address, which indicates the location of the initial interrupt
  * vector.
  */
-_boot_address = ORIGIN(rom);
+
+
+
 
 _heap_size = 0xe000;
-_stack_size = LENGTH(ram_main) - _heap_size;
+_stack_size = LENGTH(ram_main) - _heap_size - _chip_info_size;
 _stack_end = ORIGIN(ram_main) + LENGTH(ram_main);
 _stack_start = _stack_end - _stack_size;
-_flash_start = ORIGIN(eflash);
-_ram_start = ORIGIN(ram_main);
-/**
- * This symbol points at the header of the flash binary, which contains loading
- * and signing information.
- *
- * See sw/device/lib/ext/common/flash_link.ld, under the .flash_header section,
- * which populates it.
- */
-_flash_header = _flash_start;
+_boot_address = ORIGIN(ram_main);
 
 _chip_info_size = 128;
-_chip_info_start = ORIGIN(rom) + LENGTH(rom) - _chip_info_size;
+_chip_info_start = _stack_start - _chip_info_size;
+
+
 
 /* DV Log offset (has to be different to other boot stages). */
 _dv_log_offset = 0x0;
@@ -65,14 +60,14 @@ SECTIONS {
    */
   .vectors _boot_address : ALIGN(4) {
     KEEP(*(.vectors))
-  } > rom
+  } > ram_main
 
   /**
    * C runtime (CRT) section, containing program initialization code.
    */
   .crt : ALIGN(4) {
     KEEP(*(.crt))
-  } > rom
+  } > ram_main
 
   /**
    * Standard text section, containing program code.
@@ -80,7 +75,7 @@ SECTIONS {
   .text : ALIGN(4) {
     *(.text)
     *(.text.*)
-  } > rom
+  } > ram_main
 
   /**
    * Read-only data section, containing all large compile-time constants, like
@@ -93,7 +88,7 @@ SECTIONS {
     *(.srodata.*)
     *(.rodata)
     *(.rodata.*)
-  } > rom
+  } > ram_main
 
   /**
    * "Intitial data" section, the initial values of the mutable data section
@@ -101,7 +96,7 @@ SECTIONS {
    */
   .idata : ALIGN(4) {
     _data_init_start = .;
-  } > rom
+  } > ram_main
 
   /**
    * Standard mutable data section, at the bottom of RAM. This will be
@@ -131,7 +126,7 @@ SECTIONS {
    */
   .chip_info _chip_info_start : ALIGN(4) {
     *(.chip_info)
-  } > rom
+  } > ram_main
 
   /**
    * Standard BSS section. This will be zeroed at runtime by the CRT.
