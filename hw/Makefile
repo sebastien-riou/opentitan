@@ -40,7 +40,7 @@ IPS ?= ise           \
        usbdev        \
        usbuart
 
-TOPS ?= top_earlgrey
+TOPS ?= top_ise
 
 # conditional flags
 VERBOSE ?= 0
