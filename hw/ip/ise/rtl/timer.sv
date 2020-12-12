@@ -91,7 +91,9 @@ module timer #(
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (~rst_ni) begin
-      mtimecmp_q <= 'b0;
+      // set max value to avoid IRQ right after reset
+      // first IRQ after 584 years @1GHz
+      mtimecmp_q <= 64'hFFFFFFFFFFFFFFFF;
     end else if (mtimecmp_we | mtimecmph_we) begin
       mtimecmp_q <= mtimecmp_d;
     end

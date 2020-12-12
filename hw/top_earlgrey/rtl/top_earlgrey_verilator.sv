@@ -163,6 +163,7 @@ module top_earlgrey_verilator (
   );
 
 `ifdef DMIDirectTAP
+beurk
   // OpenOCD direct DMI TAP
   bind rv_dm dmidpi u_dmidpi (
     .clk_i,

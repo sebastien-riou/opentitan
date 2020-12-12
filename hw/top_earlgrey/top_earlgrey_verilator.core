@@ -54,7 +54,7 @@ parameters:
   DMIDirectTAP:
     datatype: bool
     paramtype: vlogdefine
-    default: true
+    default: false
     description: Replace JTAG TAP with an OpenOCD direct connection
   UART_LOG_uart0:
     datatype: string
@@ -79,7 +79,7 @@ targets:
       - VERILATOR_TEST_STATUS_ADDR=0x30000000
       - flashinit
       - rominit
-      - DMIDirectTAP
+#      - DMIDirectTAP
       - RV_CORE_IBEX_SIM_SRAM=true
     default_tool: verilator
     filesets:

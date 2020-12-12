@@ -243,14 +243,10 @@ module top_earlgrey_nexysvideo #(
   // JTAG clock buffer for FPGA //
   ////////////////////////////////
 
-//  BUFG jtag_buf (
-//    .I (jtag_tck),
-//    .O (jtag_tck_buf)
-//  );
-//ERROR: [Place 30-876] Port 'IO_JTCK'  is assigned to PACKAGE_PIN 'F3'  which can only be used as the N side of a differential clock input.
-//Please use the following constraint(s) to pass this DRC check:
-//set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets {IO_JTCK_IBUF}]
-  assign jtag_tck_buf = jtag_tck;
+  BUFG jtag_buf (
+    .I (jtag_tck),
+    .O (jtag_tck_buf)
+  );
 
   //////////////////
   // PLL for FPGA //

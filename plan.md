@@ -61,3 +61,24 @@ run openocd:
 ````
 
 connect in eclipse
+
+
+## WIP
+
+Debug on ISE
+
+### Using verilator
+In terminal 1:
+````
+build/lowrisc_systems_top_earlgrey_verilator_0.1/sim-verilator/Vtop_earlgrey_verilator   --meminit=rom,build-bin/sw/device/boot_rom/boot_rom_sim_verilator.elf   --meminit=flash,build-bin/sw/device/examples/ping_ise/ping_ise_sim_verilator.elf -t
+````
+
+In terminal 2:
+````
+/tools/openocd/bin/openocd -s util/openocd -f board/lowrisc-earlgrey-verilator.cfg
+````
+
+In terminal 3:
+````
+picocom --baud=115200 /dev/pts/? (replace with whatever is displayed by verilator output)
+````

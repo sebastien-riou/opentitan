@@ -9,6 +9,13 @@
 module ise (
   input clk_i,
   input rst_ni,
+  // JTAG interface
+  input               jtag_tck_i,
+  input               jtag_tms_i,
+  input               jtag_trst_ni,
+  input               jtag_tdi_i,
+  output              jtag_tdo_o,
+  output              jtag_tdo_oe_o,
 
   // Below Register interface can be changed
   input  tlul_pkg::tl_h2d_t tl_i,
@@ -36,6 +43,6 @@ module ise (
     );
 
     ise_core #(.SRAMInitFile("/home/user/Downloads/opentitan_fork/hw/ip/ise/sw/core0/core0_main0.vmem"))
-    u_core(.clk_sys(clk_i), .rst_sys_n(rst_ni), .status(hw2reg.status.d));
+    u_core(.clk_sys(clk_i), .rst_sys_n(rst_ni), .status(hw2reg.status.d), .*);
 
 endmodule

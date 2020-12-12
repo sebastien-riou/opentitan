@@ -12,14 +12,16 @@ filesets:
       - lowrisc:ibex:ibex_core
       - lowrisc:prim:all
       - lowrisc:prim:clock_gating
-      - lowrisc:prim_generic:ram_2p
+      - lowrisc:prim_generic:ram_1p
+      - pulp-platform:riscv-dbg:0.1
     files:
       - rtl/gpo.sv
       - rtl/bus.sv
       - rtl/timer.sv
-      - rtl/ram_2p.sv
+      - rtl/ram_1p.sv
       - rtl/ise_reg_pkg.sv
       - rtl/ise_reg_top.sv
+      - rtl/ibex_debug.sv
       - rtl/ise_core.sv
       - rtl/ise.sv
     file_type: systemVerilogSource

@@ -51,7 +51,7 @@ module top_${top["name"]} #(
   input               jtag_tms_i,
   input               jtag_trst_ni,
   input               jtag_tdi_i,
-  output              jtag_tdo_o,
+  output logic        jtag_tdo_o,
 
 % if num_mio != 0:
   // Multiplexed I/O
@@ -84,6 +84,19 @@ module top_${top["name"]} #(
   input               scan_rst_ni, // reset used for test mode
   input               scanmode_i   // 1 for Scan
 );
+
+    //JTAG TAPs chain: TDI->MAIN->ISE->TDO
+    wire main_jtag_tck_i   = jtag_tck_i;
+    wire main_jtag_tms_i   = jtag_tms_i;
+    wire main_jtag_trst_ni = jtag_trst_ni;
+    wire main_jtag_tdi_i   = jtag_tdi_i;
+    wire main_jtag_tdo_o;
+    wire ise_jtag_tck_i    = jtag_tck_i;
+    wire ise_jtag_tms_i    = jtag_tms_i;
+    wire ise_jtag_trst_ni  = jtag_trst_ni;
+    wire ise_jtag_tdi_i    = main_jtag_tdo_o;
+    wire ise_jtag_tdo_o;
+    always_comb jtag_tdo_o = ise_jtag_tdo_o;
 
   // JTAG IDCODE for development versions of this code.
   // Manufacturers of OpenTitan chips must replace this code with one of their
@@ -241,7 +254,6 @@ module top_${top["name"]} #(
 
   // Debug Module (RISC-V Debug Spec 0.13)
   //
-
   rv_dm #(
     .NrHarts     (1),
     .IdcodeValue (JTAG_IDCODE)
@@ -263,11 +275,11 @@ module top_${top["name"]} #(
     .tl_h_i        (main_tl_dm_sba_rsp),
 
     //JTAG
-    .tck_i            (jtag_tck_i),
-    .tms_i            (jtag_tms_i),
-    .trst_ni          (jtag_trst_ni),
-    .td_i             (jtag_tdi_i),
-    .td_o             (jtag_tdo_o),
+    .tck_i            (main_jtag_tck_i),
+    .tms_i            (main_jtag_tms_i),
+    .trst_ni          (main_jtag_trst_ni),
+    .td_i             (main_jtag_tdi_i),
+    .td_o             (main_jtag_tdo_o),
     .tdo_oe_o         (       )
   );
 
@@ -544,6 +556,15 @@ slice = str(alert_idx+w-1) + ":" + str(alert_idx)
         % endif
       % endfor
     % endif
+    % if m["type"] == "ise":
+      // jtag
+      .jtag_tck_i   (ise_jtag_tck_i  ),
+      .jtag_tms_i   (ise_jtag_tms_i  ),
+      .jtag_trst_ni (ise_jtag_trst_ni),
+      .jtag_tdi_i   (ise_jtag_tdi_i  ),
+      .jtag_tdo_o   (ise_jtag_tdo_o  ),
+      //.jtag_tdo_oe_o(),
+    % endif
     % if m["type"] == "rv_plic":
 
       .intr_src_i (intr_vector),
@@ -595,9 +616,11 @@ slice = str(alert_idx+w-1) + ":" + str(alert_idx)
     % if m["scan_reset"] == "true":
       .scan_rst_ni  (scan_rst_ni),
     % endif
+    //clocks
     % for k, v in m["clock_connections"].items():
       .${k} (${v}),
     % endfor
+    //resets
     % for k, v in m["reset_connections"].items():
       .${k} (${top["reset_paths"][v]})${"," if not loop.last else ""}
     % endfor
