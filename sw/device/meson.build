@@ -25,6 +25,7 @@ embedded_target_extra_link_args = [
 ]
 
 subdir('ram_code')
+subdir('boot_rom2')
 subdir('boot_rom')
 subdir('rom_exts')
 subdir('mask_rom')
