@@ -33,7 +33,7 @@ general guide is here: https://docs.opentitan.org/hw/top_earlgrey/ search "Addin
 - edit `sw/lib/meson.build` to create sw lib entry
 - edit sw project meson.build to include that lib.
 - `ninja -C build-out all`
-- `build/lowrisc_systems_top_earlgrey_verilator_0.1/sim-verilator/Vtop_earlgrey_verilator   --meminit=rom,build-bin/sw/device/boot_rom/boot_rom_sim_verilator.elf   --meminit=flash,build-bin/sw/device/examples/ping_aes/ping_aes_sim_verilator.elf`
+- `build/lowrisc_systems_top_earlgrey_verilator_0.1/sim-verilator/Vtop_earlgrey_verilator   --meminit=rom,build-bin/sw/device/boot_rom/boot_rom_sim_verilator.elf   --meminit=flash,build-bin/sw/device/examples/ping_ise/ping_ise_sim_verilator.elf`
 
 ### Make a custom IP
 - add it in IP list in `hw/Makefile`
@@ -62,6 +62,11 @@ run openocd:
 
 connect in eclipse
 
+
+## RAM code
+````
+build/lowrisc_systems_top_earlgrey_verilator_0.1/sim-verilator/Vtop_earlgrey_verilator   --meminit=rom,build-bin/sw/device/boot_rom2/boot_rom2_sim_verilator.elf   --meminit=ram,build-bin/sw/device/ram_code/ram_code_sim_verilator.elf
+````
 
 ## WIP
 

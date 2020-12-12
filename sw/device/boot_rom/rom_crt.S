@@ -18,7 +18,6 @@
  */
 _reset_start:
   .globl _reset_start
-  call _ram_start
   // Clobber all writeable registers.
   li  x1, 0x0
   li  x2, 0x0
