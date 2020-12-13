@@ -27,7 +27,8 @@ module rv_core_ibex #(
   parameter bit                 SecureIbex        = 1'b0,
   parameter int unsigned        DmHaltAddr        = 32'h1A110800,
   parameter int unsigned        DmExceptionAddr   = 32'h1A110808,
-  parameter bit                 PipeLine          = 1'b0
+  parameter bit                 PipeLine          = 1'b0,
+  parameter                     TRACE_NAME        = "trace_core"
 ) (
   // Clock and Reset
   input  logic        clk_i,
@@ -322,7 +323,7 @@ module rv_core_ibex #(
 `endif
 
 `ifdef RVFI
-  ibex_tracer ibex_tracer_i (
+  ibex_tracer #(.TRACE_NAME(TRACE_NAME)) ibex_tracer_i (
     .clk_i,
     .rst_ni,
 

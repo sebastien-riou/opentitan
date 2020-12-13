@@ -92,14 +92,15 @@ module ise_core(
       .SecureIbex               (0),
       .DmHaltAddr               (ADDR_SPACE_DEBUG_MEM + dm::HaltAddress[31:0]),
       .DmExceptionAddr          (ADDR_SPACE_DEBUG_MEM + dm::ExceptionAddress[31:0]),
-      .PipeLine                 (0)
+      .PipeLine                 (0),
+      .TRACE_NAME               ("trace_ise")
     ) u_rv_core_ibex (
       // clock and reset
       .clk_i                (clk_sys),
       .rst_ni               (rst_sys_n),
       .test_en_i            (1'b0),
       // static pinning
-      .hart_id_i            (32'h80000000),
+      .hart_id_i            (32'h00000000),
       .boot_addr_i          (ADDR_SPACE_RAM_MAIN),
       // TL-UL buses
       .tl_i_o               (main_tl_corei_req),
