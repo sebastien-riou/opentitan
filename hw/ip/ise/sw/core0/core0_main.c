@@ -11,10 +11,13 @@ void print_impl(const char*msg){puts(msg);}
 
 #include "ipc_basic_test.h"
 
-#define STATUS_ADDR 0x00030000
+#define STATUSEN_ADDR 0x4000001C
+#define STATUSEN (*((volatile uint32_t*)STATUSEN_ADDR))
+#define STATUS_ADDR 0x40000010
 #define STATUS (*((volatile uint32_t*)STATUS_ADDR))
 
 int main(int argc, char **argv) {
+  STATUSEN = 0xFFFFFFFF;
   while(1){
       STATUS++;
   }

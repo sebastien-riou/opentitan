@@ -67,7 +67,7 @@ def main():
         raise SystemExit(sys.exc_info()[1])
 
     log.info(obj)
-
+    log.warning("ip_path: '%s'"%args.ip_path)
     xbar = tlgen.validate(obj)
     xbar.ip_path = args.ip_path
 

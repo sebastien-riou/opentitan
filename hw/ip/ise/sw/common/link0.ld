@@ -6,8 +6,8 @@ OUTPUT_ARCH(riscv)
 
 MEMORY
 {
-    ram         : ORIGIN = 0x80000000, LENGTH = 0x1000
-    stack       : ORIGIN = 0x80001000, LENGTH = 0x1000
+    ram         : ORIGIN = 0x10000000, LENGTH = 0x1000
+    stack       : ORIGIN = 0x10001000, LENGTH = 0x1000
 }
 
 INCLUDE "link_common.ld"

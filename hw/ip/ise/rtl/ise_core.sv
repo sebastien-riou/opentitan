@@ -1,6 +1,6 @@
 module ise_core(
-    input wire clk_sys,
-    input wire rst_sys_n,
+    input wire clk_sys_i,
+    input wire rst_sys_ni,
     // JTAG interface
     input               jtag_tck_i,
     input               jtag_tms_i,
@@ -11,17 +11,6 @@ module ise_core(
 
     output logic [31:0] status
     );
-
-    parameter bit               PMPEnable                = 1'b0;
-    parameter int unsigned      PMPGranularity           = 0;
-    parameter int unsigned      PMPNumRegions            = 4;
-    parameter bit               RV32E                    = 0;
-    parameter bit               RV32M                    = 1;
-    parameter ibex_pkg::rv32b_e RV32B                    = 0;
-    parameter bit               BranchTargetALU          = 1'b0;
-    parameter bit               WritebackStage           = 1'b0;
-    parameter                   MultiplierImplementation = "fast";
-    parameter                   SRAMInitFile             = "";
 
     // JTAG IDCODE for development versions of this code.
     // Manufacturers of OpenTitan chips must replace this code with one of their
@@ -35,235 +24,90 @@ module ise_core(
       1'b1      // (fixed)
     };
 
-    localparam ADDR_SPACE_DEBUG_MEM = 32'h00010000;
+    import tlul_pkg::*;
+    //import top_pkg::*;
+    import tl_main_pkg::*;
 
-    typedef enum {
-    CoreI,
-    CoreD,
-    DbgSBA
-    } bus_host_e;
 
-    typedef enum {
-    DbgMem,
-    Ram,
-    Timer,
-    Status
-    } bus_device_e;
+    tlul_pkg::tl_h2d_t       ram_main_tl_req;
+    tlul_pkg::tl_d2h_t       ram_main_tl_rsp;
+    tlul_pkg::tl_h2d_t       gpio_tl_req;
+    tlul_pkg::tl_d2h_t       gpio_tl_rsp;
 
-    localparam NrDevices = 4;
-    localparam NrHosts = 3;
+    tlul_pkg::tl_h2d_t       main_tl_corei_req;
+    tlul_pkg::tl_d2h_t       main_tl_corei_rsp;
+    tlul_pkg::tl_h2d_t       main_tl_cored_req;
+    tlul_pkg::tl_d2h_t       main_tl_cored_rsp;
+    tlul_pkg::tl_h2d_t       main_tl_dm_sba_req;
+    tlul_pkg::tl_d2h_t       main_tl_dm_sba_rsp;
+    tlul_pkg::tl_h2d_t       main_tl_debug_mem_req;
+    tlul_pkg::tl_d2h_t       main_tl_debug_mem_rsp;
 
-    // Non-debug module reset == an extra reset source for everything except for the debug module
+    wire clk_sys = clk_sys_i;
+
+    // Non-debug module reset == reset for everything except for the debug module
     logic ndmreset_req;
-
-    //reset for everything except debug
-    wire rst_n = rst_sys_n & ~ndmreset_req;
+    wire rst_sys_n = ndmreset_req;
 
     // debug request from rv_dm to core
     logic debug_req;
 
-
-
-    // interrupts
-    logic timer_irq;
-
-    // host and device signals
-    logic           host_req    [NrHosts];
-    logic           host_gnt    [NrHosts];
-    logic [31:0]    host_addr   [NrHosts];
-    logic           host_we     [NrHosts];
-    logic [ 3:0]    host_be     [NrHosts];
-    logic [31:0]    host_wdata  [NrHosts];
-    logic           host_rvalid [NrHosts];
-    logic [31:0]    host_rdata  [NrHosts];
-    logic           host_err    [NrHosts];
-
-    // devices (slaves)
-    logic           device_req    [NrDevices];
-    logic [31:0]    device_addr   [NrDevices];
-    logic           device_we     [NrDevices];
-    logic [ 3:0]    device_be     [NrDevices];
-    logic [31:0]    device_wdata  [NrDevices];
-    logic           device_rvalid [NrDevices];
-    logic [31:0]    device_rdata  [NrDevices];
-    logic           device_err    [NrDevices];
-
-    // Device address mapping
-    logic [31:0] cfg_device_addr_base [NrDevices];
-    logic [31:0] cfg_device_addr_mask [NrDevices];
-    assign cfg_device_addr_base[DbgMem] =  ADDR_SPACE_DEBUG_MEM;
-    assign cfg_device_addr_mask[DbgMem] = ~32'h0000FFFF; //64 KB
-    assign cfg_device_addr_base[Ram]    =  32'h80000000;
-    assign cfg_device_addr_mask[Ram]    = ~32'h000FFFFF; // 1 MB
-    assign cfg_device_addr_base[Timer]  =  32'h00020000;
-    assign cfg_device_addr_mask[Timer]  = ~32'h000003FF; // 1 kB
-    assign cfg_device_addr_base[Status] =  32'h00030000;
-    assign cfg_device_addr_mask[Status] = ~32'h000003FF; // 1 kB
-
-    // Instruction fetch signals
-    //logic instr_req;
-    //logic instr_gnt;
-    //logic instr_rvalid;
-    //logic [31:0] instr_addr;
-    //logic [31:0] instr_rdata;
-    //logic instr_err;
-
-    //assign instr_gnt = instr_req;
-    //assign instr_err = '0;
-
-    // Tie-off unused error signals
-    assign device_err[Ram] = 1'b0;
-
-    bus #(
-    .NrDevices    ( NrDevices ),
-    .NrHosts      ( NrHosts   ),
-    .DataWidth    ( 32        ),
-    .AddressWidth ( 32        )
-    ) u_bus (
-    .clk_i               (clk_sys),
-    .rst_ni              (rst_n),
-
-    .host_req_i          (host_req     ),
-    .host_gnt_o          (host_gnt     ),
-    .host_addr_i         (host_addr    ),
-    .host_we_i           (host_we      ),
-    .host_be_i           (host_be      ),
-    .host_wdata_i        (host_wdata   ),
-    .host_rvalid_o       (host_rvalid  ),
-    .host_rdata_o        (host_rdata   ),
-    .host_err_o          (host_err     ),
-
-    .device_req_o        (device_req   ),
-    .device_addr_o       (device_addr  ),
-    .device_we_o         (device_we    ),
-    .device_be_o         (device_be    ),
-    .device_wdata_o      (device_wdata ),
-    .device_rvalid_i     (device_rvalid),
-    .device_rdata_i      (device_rdata ),
-    .device_err_i        (device_err   ),
-
-    .cfg_device_addr_base,
-    .cfg_device_addr_mask
-    );
-
-`ifdef RVFI
-  logic        rvfi_valid;
-  logic [63:0] rvfi_order;
-  logic [31:0] rvfi_insn;
-  logic        rvfi_trap;
-  logic        rvfi_halt;
-  logic        rvfi_intr;
-  logic [ 1:0] rvfi_mode;
-  logic [ 1:0] rvfi_ixl;
-  logic [ 4:0] rvfi_rs1_addr;
-  logic [ 4:0] rvfi_rs2_addr;
-  logic [ 4:0] rvfi_rs3_addr;
-  logic [31:0] rvfi_rs1_rdata;
-  logic [31:0] rvfi_rs2_rdata;
-  logic [31:0] rvfi_rs3_rdata;
-  logic [ 4:0] rvfi_rd_addr;
-  logic [31:0] rvfi_rd_wdata;
-  logic [31:0] rvfi_pc_rdata;
-  logic [31:0] rvfi_pc_wdata;
-  logic [31:0] rvfi_mem_addr;
-  logic [ 3:0] rvfi_mem_rmask;
-  logic [ 3:0] rvfi_mem_wmask;
-  logic [31:0] rvfi_mem_rdata;
-  logic [31:0] rvfi_mem_wdata;
-`endif
-
-    assign host_be    [CoreI] = 4'hF;
-    assign host_we    [CoreI] = 0;
-    assign host_wdata [CoreI] = 0;
-    wire [31:0] hart_id = 32'h00000000;
-
-    ibex_core #(
-      .PMPEnable                ( PMPEnable                ),
-      .PMPGranularity           ( PMPGranularity           ),
-      .PMPNumRegions            ( PMPNumRegions            ),
-      .MHPMCounterNum           ( 29                       ),
-      .RV32E                    ( RV32E                    ),
-      .RV32M                    ( RV32M                    ),
-      .RV32B                    ( RV32B                    ),
-      .BranchTargetALU          ( BranchTargetALU          ),
-      .WritebackStage           ( WritebackStage           ),
-      //.MultiplierImplementation ( MultiplierImplementation ),
-      .DmHaltAddr               ( ADDR_SPACE_DEBUG_MEM + dm::HaltAddress ),
-      .DmExceptionAddr          ( ADDR_SPACE_DEBUG_MEM + dm::ExceptionAddress)
-    ) u_core (
-      .clk_i                 (clk_sys),
-      .rst_ni                (rst_n),
-
-      .test_en_i             ('b0),
-
-      .hart_id_i             (hart_id),
-      // First instruction executed is at boot_addr_i + 0x80
-      .boot_addr_i           (32'h80000000),
-
-      .instr_req_o           (host_req   [CoreI]),
-      .instr_gnt_i           (host_gnt   [CoreI]),
-      .instr_rvalid_i        (host_rvalid[CoreI]),
-      .instr_addr_o          (host_addr  [CoreI]),
-      .instr_rdata_i         (host_rdata [CoreI]),
-      .instr_err_i           (host_err   [CoreI]),
-
-      .data_req_o            (host_req   [CoreD]),
-      .data_we_o             (host_we    [CoreD]),
-      .data_be_o             (host_be    [CoreD]),
-      .data_addr_o           (host_addr  [CoreD]),
-      .data_wdata_o          (host_wdata [CoreD]),
-      .data_rvalid_i         (host_rvalid[CoreD]),
-      .data_rdata_i          (host_rdata [CoreD]),
-      .data_err_i            (host_err   [CoreD]),
-      .data_gnt_i            (host_gnt   [CoreD]),
-
-      .irq_software_i        (1'b0),
-      .irq_timer_i           (timer_irq),
-      .irq_external_i        (1'b0),
-      .irq_fast_i            (15'b0),
-      .irq_nm_i              (1'b0),
-
-      .debug_req_i           (debug_req),
-
-      `ifdef RVFI
-          .rvfi_valid,
-          .rvfi_order,
-          .rvfi_insn,
-          .rvfi_trap,
-          .rvfi_halt,
-          .rvfi_intr,
-          .rvfi_mode,
-          .rvfi_ixl,
-          .rvfi_rs1_addr,
-          .rvfi_rs2_addr,
-          .rvfi_rs3_addr,
-          .rvfi_rs1_rdata,
-          .rvfi_rs2_rdata,
-          .rvfi_rs3_rdata,
-          .rvfi_rd_addr,
-          .rvfi_rd_wdata,
-          .rvfi_pc_rdata,
-          .rvfi_pc_wdata,
-          .rvfi_mem_addr,
-          .rvfi_mem_rmask,
-          .rvfi_mem_wmask,
-          .rvfi_mem_rdata,
-          .rvfi_mem_wdata,
-      `endif
-
-      .fetch_enable_i        ('b1),
-      .core_sleep_o          (),
-      .alert_minor_o         (),
-      .alert_major_o         ()
+    // processor core
+    rv_core_ibex #(
+      .PMPEnable                (1),
+      .PMPGranularity           (0), // 2^(PMPGranularity+2) == 4 byte granularity
+      .PMPNumRegions            (16),
+      .MHPMCounterNum           (10),
+      .MHPMCounterWidth         (32),
+      .RV32E                    (0),
+      .RV32M                    (ibex_pkg::RV32MSingleCycle),
+      .RV32B                    (ibex_pkg::RV32BNone),
+      .RegFile                  (IbexRegFile),
+      .BranchTargetALU          (1),
+      .WritebackStage           (1),
+      .ICache                   (IbexICache),
+      .ICacheECC                (1),
+      .BranchPredictor          (0),
+      .DbgTriggerEn             (1),
+      .SecureIbex               (0),
+      .DmHaltAddr               (ADDR_SPACE_DEBUG_MEM + dm::HaltAddress),
+      .DmExceptionAddr          (ADDR_SPACE_DEBUG_MEM + dm::ExceptionAddress),
+      .PipeLine                 (IbexPipeLine)
+    ) u_rv_core_ibex (
+      // clock and reset
+      .clk_i                (clk_sys),
+      .rst_ni               (rst_sys_n),
+      .test_en_i            (1'b0),
+      // static pinning
+      .hart_id_i            (32'b0),
+      .boot_addr_i          (ADDR_SPACE_ROM),
+      // TL-UL buses
+      .tl_i_o               (main_tl_corei_req),
+      .tl_i_i               (main_tl_corei_rsp),
+      .tl_d_o               (main_tl_cored_req),
+      .tl_d_i               (main_tl_cored_rsp),
+      // interrupts
+      .irq_software_i       (msip),
+      .irq_timer_i          (intr_rv_timer_timer_expired_0_0),
+      .irq_external_i       (irq_plic),
+      // escalation input from alert handler (NMI)
+      .esc_tx_i             (esc_tx[0]),
+      .esc_rx_o             (esc_rx[0]),
+      // debug interface
+      .debug_req_i          (debug_req),
+      // CPU control signals
+      .fetch_enable_i       (1'b1),
+      .core_sleep_o         ()
     );
 
     // Debug Module (RISC-V Debug Spec 0.13)
-    ibex_debug #(
+    //
+    rv_dm #(
       .NrHarts     (1),
       .IdcodeValue (JTAG_IDCODE)
     ) u_dm_top (
       .clk_i         (clk_sys),
-      .rst_ni        (rst_n),
+      .rst_ni        (rst_sys_ni),
       .testmode_i    (1'b0),
       .ndmreset_o    (ndmreset_req),
       .dmactive_o    (),
@@ -271,26 +115,12 @@ module ise_core(
       .unavailable_i (1'b0),
 
       // bus device with debug memory (for execution-based debug)
-      .device_req_i     (device_req   [DbgMem]),
-      .device_addr_i    (device_addr  [DbgMem]),
-      .device_we_i      (device_we    [DbgMem]),
-      .device_be_i      (device_be    [DbgMem]),
-      .device_wdata_i   (device_wdata [DbgMem]),
-      .device_rvalid_o  (device_rvalid[DbgMem]),
-      .device_rdata_o   (device_rdata [DbgMem]),
-      .device_err_o     (device_err   [DbgMem]),
-      .device_gnt_o     (),//TODO: assert always 1 or handle it
+      .tl_d_i        (main_tl_debug_mem_req),
+      .tl_d_o        (main_tl_debug_mem_rsp),
 
       // bus host (for system bus accesses, SBA)
-      .host_req_o       (host_req   [DbgSBA]),
-      .host_addr_o      (host_addr  [DbgSBA]),
-      .host_we_o        (host_we    [DbgSBA]),
-      .host_be_o        (host_be    [DbgSBA]),
-      .host_wdata_o     (host_wdata [DbgSBA]),
-      .host_rvalid_i    (host_rvalid[DbgSBA]),
-      .host_rdata_i     (host_rdata [DbgSBA]),
-      .host_err_i       (host_err   [DbgSBA]),
-      .host_gnt_i       (host_gnt   [DbgSBA]),
+      .tl_h_o        (main_tl_dm_sba_req),
+      .tl_h_i        (main_tl_dm_sba_rsp),
 
       //JTAG
       .tck_i            (jtag_tck_i),
@@ -298,124 +128,115 @@ module ise_core(
       .trst_ni          (jtag_trst_ni),
       .td_i             (jtag_tdi_i),
       .td_o             (jtag_tdo_o),
-      .tdo_oe_o         (jtag_tdo_oe_o)
-    );
-/*
-    // SRAM block for instruction and data storage
-    ram_2p #(
-      .Depth(8*1024/4),
-      .MemInitFile(SRAMInitFile)
-    ) u_ram (
-      .clk_i       (clk_sys),
-      .rst_ni      (rst_n),
-
-      .a_req_i     (device_req   [Ram]),
-      .a_addr_i    (device_addr  [Ram]),
-      .a_we_i      (device_we    [Ram]),
-      .a_be_i      (device_be    [Ram]),
-      .a_wdata_i   (device_wdata [Ram]),
-      .a_rvalid_o  (device_rvalid[Ram]),
-      .a_rdata_o   (device_rdata [Ram]),
-
-      .b_req_i     (instr_req),
-      .b_we_i      (1'b0),
-      .b_be_i      (4'b0),
-      .b_addr_i    (instr_addr),
-      .b_wdata_i   (32'b0),
-      .b_rvalid_o  (instr_rvalid),
-      .b_rdata_o   (instr_rdata)
-    );
-*/
-    // SRAM block for instruction and data storage
-    ram_1p #(
-      .Depth(8*1024/4),
-      .MemInitFile(SRAMInitFile)
-    ) u_ram (
-      .clk_i       (clk_sys),
-      .rst_ni      (rst_n),
-
-      .req_i     (device_req   [Ram]),
-      .addr_i    (device_addr  [Ram]),
-      .we_i      (device_we    [Ram]),
-      .be_i      (device_be    [Ram]),
-      .wdata_i   (device_wdata [Ram]),
-      .rvalid_o  (device_rvalid[Ram]),
-      .rdata_o   (device_rdata [Ram])
+      .tdo_oe_o         (       )
     );
 
+    // sram device
+    logic        ram_main_req;
+    logic        ram_main_we;
+    logic [13:0] ram_main_addr;
+    logic [31:0] ram_main_wdata;
+    logic [31:0] ram_main_wmask;
+    logic [31:0] ram_main_rdata;
+    logic        ram_main_rvalid;
+    logic [1:0]  ram_main_rerror;
 
-    timer #(
-    .DataWidth    (32),
-    .AddressWidth (32)
-    ) u_timer (
-      .clk_i          (clk_sys),
-      .rst_ni         (rst_n),
+    tlul_adapter_sram #(
+      .SramAw(14),
+      .SramDw(32),
+      .Outstanding(2)
+    ) u_tl_adapter_ram_main (
+      .clk_i    (clk_sys),
+      .rst_ni   (rst_sys_n),
+      .tl_i     (ram_main_tl_req),
+      .tl_o     (ram_main_tl_rsp),
 
-      .timer_req_i    (device_req[Timer]),
-      .timer_we_i     (device_we[Timer]),
-      .timer_be_i     (device_be[Timer]),
-      .timer_addr_i   (device_addr[Timer]),
-      .timer_wdata_i  (device_wdata[Timer]),
-      .timer_rvalid_o (device_rvalid[Timer]),
-      .timer_rdata_o  (device_rdata[Timer]),
-      .timer_err_o    (device_err[Timer]),
-      .timer_intr_o   (timer_irq)
+      .req_o    (ram_main_req),
+      .gnt_i    (1'b1), // Always grant as only one requester exists
+      .we_o     (ram_main_we),
+      .addr_o   (ram_main_addr),
+      .wdata_o  (ram_main_wdata),
+      .wmask_o  (ram_main_wmask),
+      .rdata_i  (ram_main_rdata),
+      .rvalid_i (ram_main_rvalid),
+      .rerror_i (ram_main_rerror)
     );
 
-    gpo u_status (
-      .clk_i          (clk_sys),
-      .rst_ni         (rst_n),
-      .req_i    (device_req   [Status]),
-      .we_i     (device_we    [Status]),
-      .be_i     (device_be    [Status]),
-      .addr_i   (device_addr  [Status]),
-      .wdata_i  (device_wdata [Status]),
-      .rvalid_o (device_rvalid[Status]),
-      .rdata_o  (device_rdata [Status]),
-      .err_o    (device_err   [Status]),
-      .state    (status)
+    prim_ram_1p_adv #(
+      .Width(32),
+      .Depth(16384),
+      .DataBitsPerMask(8),
+      .CfgW(8),
+      // TODO: enable parity once supported by the simulation infrastructure
+      .EnableParity(0)
+    ) u_ram1p_ram_main (
+      .clk_i    (clk_sys),
+      .rst_ni   (rst_sys_n),
+
+      .req_i    (ram_main_req),
+      .write_i  (ram_main_we),
+      .addr_i   (ram_main_addr),
+      .wdata_i  (ram_main_wdata),
+      .wmask_i  (ram_main_wmask),
+      .rdata_o  (ram_main_rdata),
+      .rvalid_o (ram_main_rvalid),
+      .rerror_o (ram_main_rerror),
+      .cfg_i    ('0)
     );
 
-/*
-always_ff @(posedge clk_sys, negedge rst_sys_n) begin
-    if(~rst_sys_n) status <= 0;
-    else begin
-        status <= status + 1;
-    end
-end
-*/
+    gpio u_status (
 
-`ifdef RVFI
-  ibex_tracer ibex_tracer_i (
-    .clk_i(clk_sys),
-    .rst_ni(rst_sys_n),
+        // Input
+        .cio_gpio_i    ('0),
 
-    .hart_id_i(hart_id|32'h80000000),
+        // Output
+        .cio_gpio_o    (status),
+        .cio_gpio_en_o (),
 
-    .rvfi_valid,
-    .rvfi_order,
-    .rvfi_insn,
-    .rvfi_trap,
-    .rvfi_halt,
-    .rvfi_intr,
-    .rvfi_mode,
-    .rvfi_ixl,
-    .rvfi_rs1_addr,
-    .rvfi_rs2_addr,
-    .rvfi_rs3_addr,
-    .rvfi_rs1_rdata,
-    .rvfi_rs2_rdata,
-    .rvfi_rs3_rdata,
-    .rvfi_rd_addr,
-    .rvfi_rd_wdata,
-    .rvfi_pc_rdata,
-    .rvfi_pc_wdata,
-    .rvfi_mem_addr,
-    .rvfi_mem_rmask,
-    .rvfi_mem_wmask,
-    .rvfi_mem_rdata,
-    .rvfi_mem_wdata
-  );
-`endif
+        // Interrupt
+        .intr_gpio_o (),
 
+        // Inter-module signals
+        .tl_i(gpio_tl_req),
+        .tl_o(gpio_tl_rsp),
+      //clocks
+        .clk_i (clk_sys),
+      //resets
+        .rst_ni (rst_sys_n)
+    );
+
+    // TL-UL Crossbar
+    xbar_main u_xbar_main (
+      .clk_main_i (clk_sys),
+      .rst_main_ni (rst_sys_n),
+
+      // port: tl_corei
+      .tl_corei_i(main_tl_corei_req),
+      .tl_corei_o(main_tl_corei_rsp),
+
+      // port: tl_cored
+      .tl_cored_i(main_tl_cored_req),
+      .tl_cored_o(main_tl_cored_rsp),
+
+      // port: tl_dm_sba
+      .tl_dm_sba_i(main_tl_dm_sba_req),
+      .tl_dm_sba_o(main_tl_dm_sba_rsp),
+
+      // port: tl_debug_mem
+      .tl_debug_mem_o(main_tl_debug_mem_req),
+      .tl_debug_mem_i(main_tl_debug_mem_rsp),
+
+      // port: tl_ram_main
+      .tl_ram_main_o(ram_main_tl_req),
+      .tl_ram_main_i(ram_main_tl_rsp),
+
+      // port: tl_gpio
+      .tl_gpio_o(gpio_tl_req),
+      .tl_gpio_i(gpio_tl_rsp),
+
+      .scanmode_i
+    );
+
+    // make sure scanmode_i is never X (including during reset)
+    `ASSERT_KNOWN(scanmodeKnown, scanmode_i, clk_main_i, 0)
 endmodule
