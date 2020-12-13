@@ -12,6 +12,8 @@ module ise_core(
     output logic [31:0] status
     );
 
+    parameter                   SRAMInitFile             = "";
+
     // JTAG IDCODE for development versions of this code.
     // Manufacturers of OpenTitan chips must replace this code with one of their
     // own IDs.
@@ -26,7 +28,7 @@ module ise_core(
 
     import tlul_pkg::*;
     //import top_pkg::*;
-    import tl_main_pkg::*;
+    import tl_ise_main_pkg::*;
 
 
     tlul_pkg::tl_h2d_t       ram_main_tl_req;
@@ -44,10 +46,28 @@ module ise_core(
     tlul_pkg::tl_d2h_t       main_tl_debug_mem_rsp;
 
     wire clk_sys = clk_sys_i;
+    wire scanmode = 0;
+    assign jtag_tdo_oe_o = 1;
+
+    // Escalation outputs
+    prim_esc_pkg::esc_tx_t [1:0]  esc_tx;
+    prim_esc_pkg::esc_rx_t [1:0]  esc_rx;
+    assign esc_tx = '0;
+
+    logic [0:0] irq_plic;
+    logic [0:0] msip;
+    //logic [6:0] irq_id[1];
+    logic [6:0] unused_irq_id[1];
+
+    assign irq_plic = '0;
+    assign msip = '0;
+
+    wire intr_rv_timer_timer_expired_0_0 = 0;
 
     // Non-debug module reset == reset for everything except for the debug module
     logic ndmreset_req;
-    wire rst_sys_n = ndmreset_req;
+    wire rst_ndm_n = ~ndmreset_req;
+    wire rst_sys_n = rst_sys_ni & rst_ndm_n;
 
     // debug request from rv_dm to core
     logic debug_req;
@@ -62,25 +82,25 @@ module ise_core(
       .RV32E                    (0),
       .RV32M                    (ibex_pkg::RV32MSingleCycle),
       .RV32B                    (ibex_pkg::RV32BNone),
-      .RegFile                  (IbexRegFile),
+      .RegFile                  (ibex_pkg::RegFileFF),
       .BranchTargetALU          (1),
       .WritebackStage           (1),
-      .ICache                   (IbexICache),
+      .ICache                   (1),
       .ICacheECC                (1),
       .BranchPredictor          (0),
       .DbgTriggerEn             (1),
       .SecureIbex               (0),
-      .DmHaltAddr               (ADDR_SPACE_DEBUG_MEM + dm::HaltAddress),
-      .DmExceptionAddr          (ADDR_SPACE_DEBUG_MEM + dm::ExceptionAddress),
-      .PipeLine                 (IbexPipeLine)
+      .DmHaltAddr               (ADDR_SPACE_DEBUG_MEM + dm::HaltAddress[31:0]),
+      .DmExceptionAddr          (ADDR_SPACE_DEBUG_MEM + dm::ExceptionAddress[31:0]),
+      .PipeLine                 (0)
     ) u_rv_core_ibex (
       // clock and reset
       .clk_i                (clk_sys),
       .rst_ni               (rst_sys_n),
       .test_en_i            (1'b0),
       // static pinning
-      .hart_id_i            (32'b0),
-      .boot_addr_i          (ADDR_SPACE_ROM),
+      .hart_id_i            (32'h80000000),
+      .boot_addr_i          (ADDR_SPACE_RAM_MAIN),
       // TL-UL buses
       .tl_i_o               (main_tl_corei_req),
       .tl_i_i               (main_tl_corei_rsp),
@@ -167,8 +187,8 @@ module ise_core(
       .Depth(16384),
       .DataBitsPerMask(8),
       .CfgW(8),
-      // TODO: enable parity once supported by the simulation infrastructure
-      .EnableParity(0)
+      .EnableParity(0),
+      .MemInitFile(SRAMInitFile)
     ) u_ram1p_ram_main (
       .clk_i    (clk_sys),
       .rst_ni   (rst_sys_n),
@@ -206,7 +226,7 @@ module ise_core(
     );
 
     // TL-UL Crossbar
-    xbar_main u_xbar_main (
+    xbar_ise_main u_xbar_main (
       .clk_main_i (clk_sys),
       .rst_main_ni (rst_sys_n),
 
@@ -234,9 +254,9 @@ module ise_core(
       .tl_gpio_o(gpio_tl_req),
       .tl_gpio_i(gpio_tl_rsp),
 
-      .scanmode_i
+      .scanmode_i(scanmode)
     );
 
-    // make sure scanmode_i is never X (including during reset)
-    `ASSERT_KNOWN(scanmodeKnown, scanmode_i, clk_main_i, 0)
+    // make sure scanmode is never X (including during reset)
+    `ASSERT_KNOWN(scanmodeKnown, scanmode, clk_main_i, 0)
 endmodule

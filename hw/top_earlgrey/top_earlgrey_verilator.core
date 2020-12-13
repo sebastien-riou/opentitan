@@ -80,7 +80,7 @@ targets:
       - flashinit
       - rominit
 #      - DMIDirectTAP
-      - RV_CORE_IBEX_SIM_SRAM=true
+      - RV_CORE_IBEX_SIM_SRAM=false
     default_tool: verilator
     filesets:
       - files_sim_verilator

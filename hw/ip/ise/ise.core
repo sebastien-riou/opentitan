@@ -8,6 +8,7 @@ description: "ise"
 filesets:
   files_rtl:
     depend:
+      - lowrisc:ip:gpio
       - lowrisc:ip:rv_core_ibex
       - lowrisc:ip:rv_dm
       - lowrisc:ip:tlul
@@ -16,6 +17,8 @@ filesets:
       - lowrisc:tlul:headers
       - lowrisc:prim:all
     files:
+      - rtl/autogen/tl_ise_main_pkg.sv
+      - rtl/autogen/xbar_ise_main.sv
       - rtl/ise_reg_pkg.sv
       - rtl/ise_reg_top.sv
       - rtl/ise_core.sv

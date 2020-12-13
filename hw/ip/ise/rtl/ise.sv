@@ -43,6 +43,6 @@ module ise (
     );
 
     ise_core #(.SRAMInitFile("/home/user/Downloads/opentitan_fork/hw/ip/ise/sw/core0/core0_main0.vmem"))
-    u_core(.clk_sys(clk_i), .rst_sys_n(rst_ni), .status(hw2reg.status.d), .*);
+    u_core(.clk_sys_i(clk_i), .rst_sys_ni(rst_ni), .status(hw2reg.status.d), .*);
 
 endmodule

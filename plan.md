@@ -87,3 +87,15 @@ In terminal 3:
 ````
 picocom --baud=115200 /dev/pts/? (replace with whatever is displayed by verilator output)
 ````
+
+
+## susbys_tl
+### gen xbar
+````
+util/tlgen.py -t hw/ip/ise/data/xbar_main.hjson -o hw/ip/ise/
+````
+
+### gen sw
+````
+make -C hw/ip/ise/sw/core0/
+````

@@ -252,6 +252,24 @@ beurk
   assign `RV_CORE_IBEX.tl_d_i_int = u_sim_sram.tl_in_o;
   assign `RV_CORE_IBEX.tl_d_o     = u_sim_sram.tl_out_o;
 
+  `define RV_CORE_IBEX_ISE      top_earlgrey.u_ise.u_core.u_rv_core_ibex
+  `define SIM_SRAM_IF_ISE       u_sim_sram_ise.u_sim_sram_if
+
+  // Detect SW test termination.
+  sim_sram u_sim_sram_ise (
+    .clk_i    (`RV_CORE_IBEX_ISE.clk_i),
+    .rst_ni   (`RV_CORE_IBEX_ISE.rst_ni),
+    .tl_in_i  (`RV_CORE_IBEX_ISE.tl_d_o_int),
+    .tl_in_o  (),
+    .tl_out_o (),
+    .tl_out_i (`RV_CORE_IBEX_ISE.tl_d_i)
+  );
+
+  // Connect the sim SRAM directly inside rv_core_ibex.
+  assign `RV_CORE_IBEX_ISE.tl_d_i_int = u_sim_sram_ise.tl_in_o;
+  assign `RV_CORE_IBEX_ISE.tl_d_o     = u_sim_sram_ise.tl_out_o;
+
+
   // Instantiate the SW test status interface & connect signals from sim_sram_if instance
   // instantiated inside sim_sram. Bind would have worked nicely here, but Verilator segfaults
   // when trace is enabled (#3951).
