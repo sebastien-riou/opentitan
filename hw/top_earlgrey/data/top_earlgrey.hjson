@@ -65,12 +65,6 @@
         sw_cg: no
       }
       {
-        name: trans
-        src: top
-        sw_cg: hint
-        unique: yes
-      }
-      {
         name: infra
         src: top
         sw_cg: no
@@ -315,20 +309,6 @@
       base_addr: 0x40080000
     }
     {
-      name: ise
-      type: ise
-      clock_srcs:
-      {
-        clk_i: main
-      }
-      clock_group: powerup
-      reset_connections:
-      {
-        rst_ni: lc
-      }
-      base_addr: 0x400F0000
-    }
-    {
       name: ipc
       type: ipc
       clock_srcs:
@@ -341,34 +321,6 @@
         rst_ni: sys
       }
       base_addr: 0x400E0000
-    }
-    {
-      name: aes
-      type: aes
-      clock_srcs:
-      {
-        clk_i: main
-      }
-      clock_group: trans
-      reset_connections:
-      {
-        rst_ni: sys
-      }
-      base_addr: 0x40110000
-    }
-    {
-      name: hmac
-      type: hmac
-      clock_srcs:
-      {
-        clk_i: main
-      }
-      clock_group: trans
-      reset_connections:
-      {
-        rst_ni: sys
-      }
-      base_addr: 0x40120000
     }
     {
       name: rv_plic
@@ -792,7 +744,6 @@
     uart
     spi_device
     flash_ctrl
-    hmac
     alert_handler
     nmi_gen
     usbdev
@@ -802,7 +753,6 @@
   interrupt: []
   alert_module:
   [
-    aes
     sensor_ctrl
     keymgr
     otp_ctrl
@@ -843,7 +793,6 @@
     nc_modules:
     [
       rv_timer
-      hmac
     ]
     num_wkup_detect: 8
     wkup_cnt_width: 8

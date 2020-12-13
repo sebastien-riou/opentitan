@@ -196,8 +196,10 @@ def gen_rtl(obj, outdir):
                                    HwAccess=HwAccess,
                                    SwRdAccess=SwRdAccess,
                                    SwWrAccess=SwWrAccess))
-        except:  # noqa: F722 for template Exception handling
+        except Exception as e:  # noqa: F722 for template Exception handling
+            log.error("obj=%s"%obj)
             log.error(exceptions.text_error_template().render())
+            raise e
 
     # Generate top.sv
     with open(outdir + "/" + block.name + "_reg_top.sv", 'w',

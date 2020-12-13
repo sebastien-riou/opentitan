@@ -85,18 +85,13 @@ module top_${top["name"]} #(
   input               scanmode_i   // 1 for Scan
 );
 
-    //JTAG TAPs chain: TDI->MAIN->ISE->TDO
+    //JTAG TAPs chain: TDI->MAIN->TDO
     wire main_jtag_tck_i   = jtag_tck_i;
     wire main_jtag_tms_i   = jtag_tms_i;
     wire main_jtag_trst_ni = jtag_trst_ni;
     wire main_jtag_tdi_i   = jtag_tdi_i;
     wire main_jtag_tdo_o;
-    wire ise_jtag_tck_i    = jtag_tck_i;
-    wire ise_jtag_tms_i    = jtag_tms_i;
-    wire ise_jtag_trst_ni  = jtag_trst_ni;
-    wire ise_jtag_tdi_i    = main_jtag_tdo_o;
-    wire ise_jtag_tdo_o;
-    always_comb jtag_tdo_o = ise_jtag_tdo_o;
+    always_comb jtag_tdo_o = main_jtag_tdo_o;
 
   // JTAG IDCODE for development versions of this code.
   // Manufacturers of OpenTitan chips must replace this code with one of their

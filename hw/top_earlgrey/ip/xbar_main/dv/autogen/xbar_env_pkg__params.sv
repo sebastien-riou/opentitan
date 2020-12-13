@@ -31,17 +31,8 @@ tl_device_t xbar_devices[$] = '{
     '{"flash_ctrl", '{
         '{32'h40030000, 32'h40030fff}
     }},
-    '{"hmac", '{
-        '{32'h40120000, 32'h40120fff}
-    }},
-    '{"ise", '{
-        '{32'h400f0000, 32'h400f0fff}
-    }},
     '{"ipc", '{
         '{32'h400e0000, 32'h400e0fff}
-    }},
-    '{"aes", '{
-        '{32'h40110000, 32'h40110fff}
     }},
     '{"rv_plic", '{
         '{32'h40090000, 32'h40090fff}
@@ -77,10 +68,7 @@ tl_host_t xbar_hosts[$] = '{
         "eflash",
         "peri",
         "flash_ctrl",
-        "ise",
         "ipc",
-        "aes",
-        "hmac",
         "rv_plic",
         "pinmux",
         "padctrl",
@@ -94,10 +82,7 @@ tl_host_t xbar_hosts[$] = '{
         "eflash",
         "peri",
         "flash_ctrl",
-        "ise",
         "ipc",
-        "aes",
-        "hmac",
         "rv_plic",
         "pinmux",
         "padctrl",

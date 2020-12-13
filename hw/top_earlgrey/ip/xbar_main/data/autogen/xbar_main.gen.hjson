@@ -43,10 +43,7 @@
       eflash
       peri
       flash_ctrl
-      ise
       ipc
-      aes
-      hmac
       rv_plic
       pinmux
       padctrl
@@ -61,10 +58,7 @@
       eflash
       peri
       flash_ctrl
-      ise
       ipc
-      aes
-      hmac
       rv_plic
       pinmux
       padctrl
@@ -239,42 +233,6 @@
       pipeline: "true"
     }
     {
-      name: hmac
-      type: device
-      clock: clk_main_i
-      reset: rst_main_ni
-      pipeline_byp: "false"
-      inst_type: hmac
-      addr_range:
-      [
-        {
-          base_addr: 0x40120000
-          size_byte: 0x1000
-        }
-      ]
-      xbar: false
-      stub: false
-      pipeline: "true"
-    }
-    {
-      name: ise
-      type: device
-      clock: clk_main_i
-      reset: rst_main_ni
-      pipeline_byp: "false"
-      inst_type: ise
-      addr_range:
-      [
-        {
-          base_addr: 0x400F0000
-          size_byte: 0x1000
-        }
-      ]
-      xbar: false
-      stub: false
-      pipeline: "true"
-    }
-    {
       name: ipc
       type: device
       clock: clk_main_i
@@ -285,24 +243,6 @@
       [
         {
           base_addr: 0x400E0000
-          size_byte: 0x1000
-        }
-      ]
-      xbar: false
-      stub: false
-      pipeline: "true"
-    }
-    {
-      name: aes
-      type: device
-      clock: clk_main_i
-      reset: rst_main_ni
-      pipeline_byp: "false"
-      inst_type: aes
-      addr_range:
-      [
-        {
-          base_addr: 0x40110000
           size_byte: 0x1000
         }
       ]

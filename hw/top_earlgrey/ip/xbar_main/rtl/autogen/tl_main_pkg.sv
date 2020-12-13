@@ -20,10 +20,7 @@ package tl_main_pkg;
     32'h 18000000
   };
   localparam logic [31:0] ADDR_SPACE_FLASH_CTRL    = 32'h 40030000;
-  localparam logic [31:0] ADDR_SPACE_HMAC          = 32'h 40120000;
-  localparam logic [31:0] ADDR_SPACE_ISE           = 32'h 400f0000;
   localparam logic [31:0] ADDR_SPACE_IPC           = 32'h 400e0000;
-  localparam logic [31:0] ADDR_SPACE_AES           = 32'h 40110000;
   localparam logic [31:0] ADDR_SPACE_RV_PLIC       = 32'h 40090000;
   localparam logic [31:0] ADDR_SPACE_PINMUX        = 32'h 40070000;
   localparam logic [31:0] ADDR_SPACE_PADCTRL       = 32'h 40160000;
@@ -45,10 +42,7 @@ package tl_main_pkg;
     32'h 00000fff
   };
   localparam logic [31:0] ADDR_MASK_FLASH_CTRL    = 32'h 00000fff;
-  localparam logic [31:0] ADDR_MASK_HMAC          = 32'h 00000fff;
-  localparam logic [31:0] ADDR_MASK_ISE           = 32'h 00000fff;
   localparam logic [31:0] ADDR_MASK_IPC           = 32'h 00000fff;
-  localparam logic [31:0] ADDR_MASK_AES           = 32'h 00000fff;
   localparam logic [31:0] ADDR_MASK_RV_PLIC       = 32'h 00000fff;
   localparam logic [31:0] ADDR_MASK_PINMUX        = 32'h 00000fff;
   localparam logic [31:0] ADDR_MASK_PADCTRL       = 32'h 00000fff;
@@ -57,7 +51,7 @@ package tl_main_pkg;
   localparam logic [31:0] ADDR_MASK_KEYMGR        = 32'h 00000fff;
 
   localparam int N_HOST   = 3;
-  localparam int N_DEVICE = 16;
+  localparam int N_DEVICE = 13;
 
   typedef enum int {
     TlRom = 0,
@@ -66,16 +60,13 @@ package tl_main_pkg;
     TlEflash = 3,
     TlPeri = 4,
     TlFlashCtrl = 5,
-    TlHmac = 6,
-    TlIse = 7,
-    TlIpc = 8,
-    TlAes = 9,
-    TlRvPlic = 10,
-    TlPinmux = 11,
-    TlPadctrl = 12,
-    TlAlertHandler = 13,
-    TlNmiGen = 14,
-    TlKeymgr = 15
+    TlIpc = 6,
+    TlRvPlic = 7,
+    TlPinmux = 8,
+    TlPadctrl = 9,
+    TlAlertHandler = 10,
+    TlNmiGen = 11,
+    TlKeymgr = 12
   } tl_device_e;
 
   typedef enum int {
