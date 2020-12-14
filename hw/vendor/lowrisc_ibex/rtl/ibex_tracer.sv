@@ -67,7 +67,7 @@ module ibex_tracer (
   input logic [31:0] rvfi_mem_rdata,
   input logic [31:0] rvfi_mem_wdata
 );
-
+  parameter TRACE_NAME = "trace_core";
   // These signals are part of RVFI, but not used in this module currently.
   // Keep them as part of the interface to change the tracer more easily in the future. Assigning
   // these signals to unused_* signals marks them explicitly as unused, an annotation picked up by
@@ -111,7 +111,7 @@ module ibex_tracer (
     string rvfi_insn_str;
 
     if (file_handle == 32'h0) begin
-      string file_name_base = "trace_core";
+      string file_name_base = TRACE_NAME;
       $value$plusargs("ibex_tracer_file_base=%s", file_name_base);
       $sformat(file_name, "%s_%h.log", file_name_base, hart_id_i);
 

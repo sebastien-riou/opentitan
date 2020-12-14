@@ -330,7 +330,7 @@ module ibex_debug #(
       device_gnt_o <= '0;
     end else begin
       device_gnt_o <= device_req_i;
-      device_rvalid_o <= device_req_i & ~device_we_i;
+      device_rvalid_o <= device_req_i;// need rvalid for both read and write
     end
   end
 `endif

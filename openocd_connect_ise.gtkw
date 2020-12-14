@@ -1,0 +1,108 @@
+[*]
+[*] GTKWave Analyzer v3.3.103 (w)1999-2019 BSI
+[*] Mon Dec 14 22:50:49 2020
+[*]
+[dumpfile] "/home/user/Downloads/opentitan_fork/sim.fst"
+[dumpfile_mtime] "Mon Dec 14 22:40:19 2020"
+[dumpfile_size] 5031075
+[savefile] "/home/user/Downloads/opentitan_fork/openocd_connect_ise.gtkw"
+[timestart] 24830
+[size] 1848 1016
+[pos] -1 -1
+*-9.824160 27409 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.top_earlgrey_verilator.
+[treeopen] TOP.top_earlgrey_verilator.top_earlgrey.
+[treeopen] TOP.top_earlgrey_verilator.top_earlgrey.u_ise.
+[treeopen] TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.
+[treeopen] TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_dm_top.
+[treeopen] TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.
+[sst_width] 346
+[signals_width] 317
+[sst_expanded] 1
+[sst_vpaned_height] 278
+@200
+-main_core
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.boot_addr_i[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.rst_ni
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.clk_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_addr_o[31:0]
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_be_o[3:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_err_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_gnt_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_rdata_i[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_req_o
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_wdata_o[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.data_we_o
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.debug_req_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.fetch_enable_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.instr_addr_o[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.instr_err_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.instr_gnt_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.instr_rdata_i[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.instr_req_o
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.instr_rvalid_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.irq_external_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.irq_fast_i[14:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.irq_nm_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.irq_software_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_rv_core_ibex.u_core.irq_timer_i
+@200
+-ise_core
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.ndmreset_req
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.rst_sys_n
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_dm_top.debug_req_o
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_dm_top.i_dm_csrs.halted_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_dm_top.i_dm_csrs.haltreq_o
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_addr_o[31:0]
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_be_o[3:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_err_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_gnt_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_rdata_i[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_req_o
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_rvalid_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_wdata_o[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.data_we_o
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.debug_req_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.fetch_enable_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.instr_addr_o[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.instr_err_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.instr_gnt_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.instr_rdata_i[31:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.instr_req_o
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.instr_rvalid_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.irq_external_i
+@22
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.irq_fast_i[14:0]
+@28
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.irq_nm_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.irq_pending
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.irq_software_i
+TOP.top_earlgrey_verilator.top_earlgrey.u_ise.u_core.u_core.irq_timer_i
+[pattern_trace] 1
+[pattern_trace] 0

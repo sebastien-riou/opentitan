@@ -7,18 +7,6 @@
 
 .section .text
 
-default_exc_handler:
-  jal x0, simple_exc_handler
-
-timer_handler:
-  jal x0, simple_timer_handler
-
-fast_irq0_handler:
-  jal x0, ipc0_handler
-
-fast_irq1_handler:
-  jal x0, ipc1_handler
-
 reset_handler:
   /* set all registers to zero */
   mv  x1, x0
@@ -89,6 +77,19 @@ exit_fail:
 sleep_loop:
   wfi
   j sleep_loop
+
+
+  default_exc_handler:
+    jal x0, simple_exc_handler
+
+  timer_handler:
+    jal x0, simple_timer_handler
+
+  fast_irq0_handler:
+    jal x0, ipc0_handler
+
+  fast_irq1_handler:
+    jal x0, ipc1_handler
 
 /* =================================================== [ exceptions ] === */
 /* This section has to be down here, since we have to disable rvc for it  */

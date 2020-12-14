@@ -22,6 +22,7 @@ module ise_core(
     parameter bit               WritebackStage           = 1'b0;
     parameter                   MultiplierImplementation = "fast";
     parameter                   SRAMInitFile             = "";
+    parameter                   TRACE_NAME               = "trace_ise";
 
     // JTAG IDCODE for development versions of this code.
     // Manufacturers of OpenTitan chips must replace this code with one of their
@@ -35,7 +36,7 @@ module ise_core(
       1'b1      // (fixed)
     };
 
-    localparam ADDR_SPACE_DEBUG_MEM = 32'h00010000;
+    localparam ADDR_SPACE_DEBUG_MEM = 32'h1a110000;
 
     typedef enum {
     CoreI,
@@ -93,7 +94,7 @@ module ise_core(
     logic [31:0] cfg_device_addr_mask [NrDevices];
     assign cfg_device_addr_base[DbgMem] =  ADDR_SPACE_DEBUG_MEM;
     assign cfg_device_addr_mask[DbgMem] = ~32'h0000FFFF; //64 KB
-    assign cfg_device_addr_base[Ram]    =  32'h80000000;
+    assign cfg_device_addr_base[Ram]    =  32'h10000000;
     assign cfg_device_addr_mask[Ram]    = ~32'h000FFFFF; // 1 MB
     assign cfg_device_addr_base[Timer]  =  32'h00020000;
     assign cfg_device_addr_mask[Timer]  = ~32'h000003FF; // 1 kB
@@ -176,7 +177,14 @@ module ise_core(
     assign host_we    [CoreI] = 0;
     assign host_wdata [CoreI] = 0;
     wire [31:0] hart_id = 32'h00000000;
-
+//    wire instr_req;
+//    always_ff @(posedge clk_sys or negedge rst_n) begin
+//        if(~rst_n) host_req[CoreI] <= 0;
+//        else begin
+//            if(host_req[CoreI]) host_req[CoreI] <= 0;
+//            else host_req[CoreI] <= instr_req;
+//        end
+//    end
     ibex_core #(
       .PMPEnable                ( PMPEnable                ),
       .PMPGranularity           ( PMPGranularity           ),
@@ -198,9 +206,10 @@ module ise_core(
 
       .hart_id_i             (hart_id),
       // First instruction executed is at boot_addr_i + 0x80
-      .boot_addr_i           (32'h80000000),
+      .boot_addr_i           (32'h10000000),
 
       .instr_req_o           (host_req   [CoreI]),
+      //.instr_req_o           (instr_req),
       .instr_gnt_i           (host_gnt   [CoreI]),
       .instr_rvalid_i        (host_rvalid[CoreI]),
       .instr_addr_o          (host_addr  [CoreI]),
@@ -386,11 +395,11 @@ end
 */
 
 `ifdef RVFI
-  ibex_tracer ibex_tracer_i (
+  ibex_tracer #(.TRACE_NAME(TRACE_NAME)) ibex_tracer_i (
     .clk_i(clk_sys),
     .rst_ni(rst_sys_n),
 
-    .hart_id_i(hart_id|32'h80000000),
+    .hart_id_i(hart_id),
 
     .rvfi_valid,
     .rvfi_order,
